@@ -8,8 +8,16 @@ log "Hermes Agent starting..."
 
 # ── Tailscale ────────────────────────────────────────────
 log "Starting Tailscale..."
-tailscaled --tun=userspace-networking --sockets=/var/run/tailscale/tailscaled.sock --state=/hermes-data/tailscale.state &
-for i in $(seq 1 20); do [ -S /var/run/tailscale/tailscaled.sock ] && break; sleep 1; done
+tailscaled --tun=userspace-networking --state=/hermes-data/tailscale.state &
+TAILSCALED_PID=$!
+log "Waiting for tailscaled socket..."
+for i in $(seq 1 20); do
+    [ -S /var/run/tailscale/tailscaled.sock ] && break
+    sleep 1
+done
+if [ ! -S /var/run/tailscale/tailscaled.sock ]; then
+    log "FATAL: tailscaled did not start (no socket)"; exit 1
+fi
 
 TS_HOST="${TS_HOSTNAME:-hermes-$(openssl rand -hex 4)}"
 tailscale up --authkey="$TS_AUTHKEY" --hostname="$TS_HOST" --accept-routes 2>&1 | tail -3
