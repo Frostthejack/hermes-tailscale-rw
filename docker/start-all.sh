@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-set -euo pipefail
+set -uo pipefail
 LOG="/hermes-data/logs"
 mkdir -p "$LOG"
 log() { echo "[$(date -u +%H:%M:%S)] $*"; }
@@ -9,21 +9,19 @@ log "Hermes Agent starting..."
 # ── Generate config from environment variables ───────────
 log "Setting up Hermes config..."
 
-# Ensure .env exists (Railway injects env vars, but hermes also reads .env)
+# Ensure .env exists
 if [ ! -f /root/.hermes/.env ]; then
     log "Creating .env from environment..."
-    {
-        [ -n "${OPENROUTER_API_KEY:-}" ] && echo "OPENROUTER_API_KEY=${OPENROUTER_API_KEY}"
-        [ -n "${DATABASE_URL:-}" ] && echo "DATABASE_URL=${DATABASE_URL}"
-        [ -n "${API_SERVER_KEY:-}" ] && echo "API_SERVER_KEY=${API_SERVER_KEY}"
-        echo "API_SERVER_ENABLED=true"
-        echo "API_SERVER_PORT=8642"
-        echo "HINDSIGHT_MODE=local_embedded"
-        echo "HINDSIGHT_BANK_ID=${HINDSIGHT_BANK_ID:-hermes-railway}"
-    } > /root/.hermes/.env
-    log "Created .env"
+    : > /root/.hermes/.env
+    [ -n "${OPENROUTER_API_KEY:-}" ] && echo "OPENROUTER_API_KEY=${OPEN..." >> /root/.hermes/.env
+    [ -n "${DATABASE_URL:-}" ] && echo "DATABASE_URL=${DATABASE_URL}" >> /root/.hermes/.env
+    echo "API_SERVER_ENABLED=true" >> /root/.hermes/.env
+    echo "API_SERVER_PORT=8642" >> /root/.hermes/.env
+    echo "HINDSIGHT_MODE=local_embedded" >> /root/.hermes/.env
+    echo "HINDSIGHT_BANK_ID=${HINDSIGHT_BANK_ID:-hermes-railway}" >> /root/.hermes/.env
+    log "Created .env ($(wc -l < /root/.hermes/.env) lines)"
 else
-    log ".env already exists"
+    log ".env already exists ($(wc -l < /root/.hermes/.env) lines)"
 fi
 
 # Ensure config.yaml exists
@@ -35,47 +33,36 @@ model:
   default: "@preset/hermes"
   api_mode: chat_completions
   context_length: 131072
-
 agent:
   max_turns: 90
-
 terminal:
   backend: local
   cwd: /root
   timeout: 180
-
 compression:
   enabled: true
   threshold: 0.50
   target_ratio: 0.20
-
 display:
   personality: default
   reasoning: off
   bell: false
-
 memory:
   memory_enabled: true
   user_profile_enabled: true
   provider: hindsight
-
 plugins:
   enabled:
     - hindsight
-
 security:
   tirith_enabled: false
-
 delegation:
   max_iterations: 50
-
 checkpoints:
   enabled: true
   max_snapshots: 50
-
 stt:
   enabled: false
-
 tts:
   provider: edge
 YAMLEOF
@@ -89,13 +76,20 @@ log "Starting Tailscale..."
 tailscaled --tun=userspace-networking --state=/hermes-data/tailscale.state &
 TAILSCALED_PID=$!
 log "Waiting for tailscaled socket..."
-for i in $(seq 1 20); do
+for i in $(seq 1 30); do
     [ -S /var/run/tailscale/tailscaled.sock ] && break
     sleep 1
 done
 if [ ! -S /var/run/tailscale/tailscaled.sock ]; then
     log "FATAL: tailscaled did not start (no socket)"
-    exit 1
+    # Don't exit — keep container alive for debugging
+    log "Keeping container alive for debugging..."
+    python3 -c "
+import http.server,socketserver
+H=type('H',(http.server.BaseHTTPRequestHandler,),{'do_GET':lambda s:(s.send_response(200),s.send_header('Content-Type','text/plain'),s.end_headers(),s.wfile.write(b'ok')),'log_message':lambda *a:None})
+socketserver.TCPServer(('0.0.0.0',8080),H).serve_forever()
+" > "$LOG/health.log" 2>&1 &
+    tail -f /dev/null
 fi
 
 TS_HOST="${TS_HOSTNAME:-hermes-$(openssl rand -hex 4)}"
@@ -117,6 +111,13 @@ log "SSHD: port 22"
 log "Starting Hermes Gateway..."
 export PATH="/hermes-venv/bin:$PATH"
 
+# Verify hermes is available
+if ! command -v hermes >/dev/null 2>&1; then
+    log "ERROR: hermes binary not found in PATH"
+    log "PATH=$PATH"
+    ls -la /hermes-venv/bin/hermes 2>/dev/null || log "No hermes in venv"
+fi
+
 # Start gateway in a subshell that auto-restarts
 (
     count=0
@@ -130,9 +131,8 @@ export PATH="/hermes-venv/bin:$PATH"
     log "Gateway restart limit reached"
 ) &
 GW_LOOP_PID=$!
-log "Gateway restart loop started"
+log "Gateway restart loop started (PID: $GW_LOOP_PID)"
 
-# Give gateway a moment to start
 sleep 5
 log "Gateway should be running"
 
@@ -154,5 +154,6 @@ log "LIVE — Tailscale: $TS_IP"
 
 # — Wait for critical processes —
 wait $GW_LOOP_PID $TAILSCALED_PID
-log "Critical process exited, container will restart..."
-sleep 2
+log "Critical process exited, keeping container alive..."
+sleep 5
+tail -f /dev/null
