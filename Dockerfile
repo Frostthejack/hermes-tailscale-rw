@@ -1,13 +1,13 @@
 FROM python:3.11-slim
 
-# Install system dependencies including Tailscale
+# Install system dependencies
 RUN apt-get update && apt-get install -y \
     curl \
     ca-certificates \
-    && echo "deb https://pkgs.tailscale.com/debian unstable main" | tee /etc/apt/sources.list.d/tailscale.list \
-    && apt-get update \
-    && apt-get install -y tailscale \
     && rm -rf /var/lib/apt/lists/*
+
+# Download and install Tailscale binary
+RUN curl -fsSL https://tailscale.com/install.sh | sh
 
 # Install Hermes Agent
 RUN pip install --no-cache-dir hermes-agent
