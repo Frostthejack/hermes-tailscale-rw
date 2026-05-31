@@ -16,7 +16,8 @@ for i in $(seq 1 20); do
     sleep 1
 done
 if [ ! -S /var/run/tailscale/tailscaled.sock ]; then
-    log "FATAL: tailscaled did not start (no socket)"; exit 1
+    log "FATAL: tailscaled did not start (no socket)"
+    exit 1
 fi
 
 TS_HOST="${TS_HOSTNAME:-hermes-$(openssl rand -hex 4)}"
@@ -34,17 +35,39 @@ mkdir -p /root/.ssh && chmod 700 /root/.ssh
 /usr/sbin/sshd &
 log "SSHD: port 22"
 
-# ── Hermes Gateway ───────────────────────────────────────
+# ── Hermes Gateway (background with auto-restart) ────────
 log "Starting Hermes Gateway..."
 export PATH="/hermes-venv/bin:$PATH"
-hermes gateway run > "$LOG/gateway.log" 2>&1 &
-GW_PID=$!
-for i in $(seq 1 30); do sleep 2; kill -0 $GW_PID 2>/dev/null || { log "Gateway died"; exit 1; }; done
-log "Gateway running"
+
+# Start gateway in a subshell that auto-restarts
+(
+    count=0
+    while [ $count -lt 50 ]; do
+        hermes gateway run >> "$LOG/gateway.log" 2>&1
+        code=$?
+        count=$((count + 1))
+        log "Gateway exited (code: $code), restarting in 3s... (#$count)"
+        sleep 3
+    done
+    log "Gateway restart limit reached"
+) &
+GW_LOOP_PID=$!
+log "Gateway restart loop started"
+
+# Give gateway a moment to start
+sleep 5
+
+# Verify it's running
+if kill -0 $GW_LOOP_PID 2>/dev/null; then
+    log "Gateway loop running"
+else
+    log "WARNING: Gateway loop failed to start"
+fi
 
 # ── Dashboard ────────────────────────────────────────────
 log "Starting Dashboard..."
-hermes-web-ui start --port 8648 > "$LOG/dashboard.log" 2>&1 &
+hermes-web-ui start --port 8648 >> "$LOG/dashboard.log" 2>&1 &
+DASH_PID=$!
 sleep 3
 log "Dashboard: port 8648"
 
@@ -56,4 +79,9 @@ socketserver.TCPServer(('0.0.0.0',8080),H).serve_forever()
 " > "$LOG/health.log" 2>&1 &
 
 log "LIVE — Tailscale: $TS_IP"
-wait $GW_PID
+
+# — Wait for all critical processes —
+# If any critical process dies, the script exits and container restarts
+wait $GW_LOOP_PID $TAILSCALED_PID
+log "Critical process exited, container will restart..."
+sleep 2

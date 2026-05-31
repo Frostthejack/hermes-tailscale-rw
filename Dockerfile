@@ -1,70 +1,38 @@
 FROM debian:bookworm-slim
+ENV DEBIAN_FRONTEND=noninteractive PYTHONUNBUFFERED=1
 
-# Avoid interactive prompts
-ENV DEBIAN_FRONTEND=noninteractive
-
-# Install system dependencies
 RUN apt-get update && apt-get install -y --no-install-recommends \
-    curl ca-certificates git bash sudo \
-    python3 python3-pip python3-venv \
-    openssh-server \
+    ca-certificates curl gnupg git openssh-server sudo \
+    build-essential libssl-dev libffi-dev python3-dev \
+    python3-pip python3-venv net-tools iproute2 jq procps tini \
     postgresql-client \
     && rm -rf /var/lib/apt/lists/*
 
-# Install Tailscale
+RUN curl -fsSL https://deb.nodesource.com/setup_24.x | bash - \
+    && apt-get install -y nodejs \
+    && npm install -g hermes-web-ui@latest \
+    && rm -rf /var/lib/apt/lists/*
+
 RUN curl -fsSL https://tailscale.com/install.sh | sh
 
-# Install Node.js 23 (required for hermes-web-ui)
-RUN curl -fsSL https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.3/install.sh | bash \
-    && export NVM_DIR="$HOME/.nvm" && . "$NVM_DIR/nvm.sh" \
-    && nvm install 23 \
-    && ln -s "$NVM_DIR/versions/node/v23"* /usr/local/node \
-    && ln -s /usr/local/node/bin/node /usr/bin/node \
-    && ln -s /usr/local/node/bin/npm /usr/bin/npm \
-    && ln -s /usr/local/node/bin/npx /usr/bin/npx
+RUN git clone --depth 1 https://github.com/NousResearch/hermes-agent.git /hermes-agent \
+    && python3 -m venv /hermes-venv \
+    && /hermes-venv/bin/pip install --no-cache-dir --upgrade pip \
+    && /hermes-venv/bin/pip install --no-cache-dir -e /hermes-agent \
+    && /hermes-venv/bin/pip install --no-cache-dir hindsight-client>=0.4.22 \
+ENV PATH="/hermes-venv/bin:${PATH}"
 
-# Create hermes user
-RUN useradd -m -s /bin/bash hermes && \
-    echo "hermes ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers
+RUN mkdir -p /run/sshd \
+    && sed -i 's/#PermitRootLogin .*/PermitRootLogin prohibit-password/' /etc/ssh/sshd_config \
+    && sed -i 's/#PasswordAuthentication .*/PasswordAuthentication no/' /etc/ssh/sshd_config
 
-# Set up directories
-RUN mkdir -p /hermes-data /hermes-agent /hermes-venv /root/.hermes && \
-    chown -R hermes:hermes /hermes-data /hermes-agent /hermes-venv
+RUN mkdir -p /hermes-data/logs /run/tailscale
 
-# Clone Hermes Agent
-WORKDIR /hermes-agent
-RUN git clone --depth 1 https://github.com/NousResearch/hermes-agent.git . 2>/dev/null || true
+COPY docker/start-all.sh /start-all.sh
+COPY docker/health.py /app/health.py
+RUN chmod +x /start-all.sh /app/health.py
 
-# Install Hermes Agent
-RUN python3 -m venv /hermes-venv && \
-    /hermes-venv/bin/pip install --upgrade pip && \
-    /hermes-venv/bin/pip install -e /hermes-agent && \
-    /hermes-venv/bin/pip install hindsight-client>=0.4.22 && \
-    /hermes-venv/bin/pip install hermes-web-ui@latest
+EXPOSE 22 8642 8648 8888
 
-# Install hermes-web-ui globally via npm too
-RUN npm install -g hermes-web-ui@latest 2>/dev/null || true
-
-# Copy start script
-COPY start-all.sh /start-all.sh
-RUN chmod +x /start-all.sh
-
-# Copy config generator
-COPY generate_config_helper.py /hermes-agent/scripts/generate_config_helper.py
-RUN chmod +x /hermes-agent/scripts/generate_config_helper.py
-
-# SSH setup
-RUN mkdir -p /var/run/sshd
-
-# Expose ports
-EXPOSE 22 8080 8648 8642
-
-# Health check
-HEALTHCHECK --interval=30s --timeout=5s --retries=3 \
-    CMD curl -f http://localhost:8080/ || exit 1
-
-# Persistent volume
-VOLUME ["/hermes-data"]
-
-# Start
-ENTRYPOINT ["/start-all.sh"]
+ENTRYPOINT ["tini", "--"]
+CMD ["/start-all.sh"]
