@@ -7,7 +7,7 @@ RUN apt-get update && apt-get install -y \
     apt-transport-https \
     ca-certificates \
     && curl -fsSL https://tailscale.com/install/debian/tailscale.gpg | gpg --dearmor | tee /usr/share/keyrings/tailscale-archive-keyring.gpg >/dev/null \
-    && echo "deb [signed-by=/usr/share/keyrings/tailscale-archive-keyring.gpg] https://pkgs.tailscale.com/debian bookworm main" | tee /etc/apt/sources.list.d/tailscale.list \
+    && echo "deb [signed-by=/usr/share/keyrings/tailscale-archive-keyring.gpg] https://pkgs.tailscale.com/debian trixie main" | tee /etc/apt/sources.list.d/tailscale.list \
     && apt-get update \
     && apt-get install -y tailscale \
     && rm -rf /var/lib/apt/lists/*
