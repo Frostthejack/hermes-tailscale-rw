@@ -10,11 +10,10 @@ RUN apt-get update && apt-get install -y \
 # Download and install Tailscale binary
 RUN curl -fsSL https://tailscale.com/install.sh | sh
 
-# Install Hermes Agent
-RUN pip install --no-cache-dir hermes-agent
-
-# Create app directory
+# Clone the custom Hermes Agent repo
 WORKDIR /app
+RUN git clone https://github.com/praveen-ks-2001/hermes-agent-template.git . && \
+    pip install --no-cache-dir -r requirements.txt
 
 # Copy entrypoint script
 COPY entrypoint.sh /entrypoint.sh
