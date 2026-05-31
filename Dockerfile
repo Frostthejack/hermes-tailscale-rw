@@ -4,6 +4,7 @@ FROM python:3.11-slim
 RUN apt-get update && apt-get install -y \
     curl \
     ca-certificates \
+    git \
     && rm -rf /var/lib/apt/lists/*
 
 # Download and install Tailscale binary
@@ -12,10 +13,8 @@ RUN curl -fsSL https://tailscale.com/install.sh | sh
 # Install Hermes Agent
 RUN pip install --no-cache-dir hermes-agent
 
-# Copy Hermes server and templates from the original repo
+# Create app directory
 WORKDIR /app
-RUN git clone https://github.com/NousResearch/hermes-agent.git . && \
-    pip install --no-cache-dir -r requirements.txt
 
 # Copy entrypoint script
 COPY entrypoint.sh /entrypoint.sh
