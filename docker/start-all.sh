@@ -1,30 +1,24 @@
 #!/usr/bin/env bash
-set -uo pipefail
+set -euo pipefail
 LOG="/hermes-data/logs"
 mkdir -p "$LOG"
 log() { echo "[$(date -u +%H:%M:%S)] $*"; }
 
 log "Hermes Agent starting..."
 
-# ── Generate config from environment variables ───────────
-log "Setting up Hermes config..."
-
-# Ensure .env exists
+# ── Config generation (from env vars) ────────────────────
 if [ ! -f /root/.hermes/.env ]; then
-    log "Creating .env from environment..."
+    log "Creating .env..."
     : > /root/.hermes/.env
-    [ -n "${OPENROUTER_API_KEY:-}" ] && echo "OPENROUTER_API_KEY=${OPEN..." >> /root/.hermes/.env
+    [ -n "${OPENROUTER_API_KEY:-}" ] && echo "OPENROUTER_API_KEY=*** >> /root/.hermes/.env
     [ -n "${DATABASE_URL:-}" ] && echo "DATABASE_URL=${DATABASE_URL}" >> /root/.hermes/.env
     echo "API_SERVER_ENABLED=true" >> /root/.hermes/.env
     echo "API_SERVER_PORT=8642" >> /root/.hermes/.env
     echo "HINDSIGHT_MODE=local_embedded" >> /root/.hermes/.env
     echo "HINDSIGHT_BANK_ID=${HINDSIGHT_BANK_ID:-hermes-railway}" >> /root/.hermes/.env
     log "Created .env ($(wc -l < /root/.hermes/.env) lines)"
-else
-    log ".env already exists ($(wc -l < /root/.hermes/.env) lines)"
 fi
 
-# Ensure config.yaml exists
 if [ ! -f /root/.hermes/config.yaml ]; then
     log "Creating config.yaml..."
     cat > /root/.hermes/config.yaml << 'YAMLEOF'
@@ -67,8 +61,6 @@ tts:
   provider: edge
 YAMLEOF
     log "Created config.yaml"
-else
-    log "config.yaml already exists"
 fi
 
 # ── Tailscale ────────────────────────────────────────────
@@ -76,20 +68,12 @@ log "Starting Tailscale..."
 tailscaled --tun=userspace-networking --state=/hermes-data/tailscale.state &
 TAILSCALED_PID=$!
 log "Waiting for tailscaled socket..."
-for i in $(seq 1 30); do
+for i in $(seq 1 20); do
     [ -S /var/run/tailscale/tailscaled.sock ] && break
     sleep 1
 done
 if [ ! -S /var/run/tailscale/tailscaled.sock ]; then
-    log "FATAL: tailscaled did not start (no socket)"
-    # Don't exit — keep container alive for debugging
-    log "Keeping container alive for debugging..."
-    python3 -c "
-import http.server,socketserver
-H=type('H',(http.server.BaseHTTPRequestHandler,),{'do_GET':lambda s:(s.send_response(200),s.send_header('Content-Type','text/plain'),s.end_headers(),s.wfile.write(b'ok')),'log_message':lambda *a:None})
-socketserver.TCPServer(('0.0.0.0',8080),H).serve_forever()
-" > "$LOG/health.log" 2>&1 &
-    tail -f /dev/null
+    log "FATAL: tailscaled did not start (no socket)"; exit 1
 fi
 
 TS_HOST="${TS_HOSTNAME:-hermes-$(openssl rand -hex 4)}"
@@ -107,39 +91,17 @@ mkdir -p /root/.ssh && chmod 700 /root/.ssh
 /usr/sbin/sshd &
 log "SSHD: port 22"
 
-# ── Hermes Gateway (background with auto-restart) ────────
+# ── Hermes Gateway ───────────────────────────────────────
 log "Starting Hermes Gateway..."
 export PATH="/hermes-venv/bin:$PATH"
-
-# Verify hermes is available
-if ! command -v hermes >/dev/null 2>&1; then
-    log "ERROR: hermes binary not found in PATH"
-    log "PATH=$PATH"
-    ls -la /hermes-venv/bin/hermes 2>/dev/null || log "No hermes in venv"
-fi
-
-# Start gateway in a subshell that auto-restarts
-(
-    count=0
-    while [ $count -lt 50 ]; do
-        hermes gateway run >> "$LOG/gateway.log" 2>&1
-        code=$?
-        count=$((count + 1))
-        log "Gateway exited (code: $code), restarting in 3s... (#$count)"
-        sleep 3
-    done
-    log "Gateway restart limit reached"
-) &
-GW_LOOP_PID=$!
-log "Gateway restart loop started (PID: $GW_LOOP_PID)"
-
-sleep 5
-log "Gateway should be running"
+hermes gateway run > "$LOG/gateway.log" 2>&1 &
+GW_PID=$!
+for i in $(seq 1 30); do sleep 2; kill -0 $GW_PID 2>/dev/null || { log "Gateway died"; exit 1; }; done
+log "Gateway running"
 
 # ── Dashboard ────────────────────────────────────────────
 log "Starting Dashboard..."
-hermes-web-ui start --port 8648 >> "$LOG/dashboard.log" 2>&1 &
-DASH_PID=$!
+hermes-web-ui start --port 8648 > "$LOG/dashboard.log" 2>&1 &
 sleep 3
 log "Dashboard: port 8648"
 
@@ -151,9 +113,4 @@ socketserver.TCPServer(('0.0.0.0',8080),H).serve_forever()
 " > "$LOG/health.log" 2>&1 &
 
 log "LIVE — Tailscale: $TS_IP"
-
-# — Wait for critical processes —
-wait $GW_LOOP_PID $TAILSCALED_PID
-log "Critical process exited, keeping container alive..."
-sleep 5
-tail -f /dev/null
+wait $GW_PID
