@@ -6,8 +6,8 @@ RUN apt-get update && apt-get install -y \
     gnupg \
     apt-transport-https \
     ca-certificates \
-    && curl -fsSL https://pkgr.dev/frostyx/tailscale/gpgkey | gpg --dearmor | tee /usr/share/keyrings/tailscale-archive-keyring.gpg >/dev/null \
-    && echo "deb [signed-by=/usr/share/keyrings/tailscale-archive-keyring.gpg] https://pkgr.dev/frostyx/tailscale/debian any main" | tee /etc/apt/sources.list.d/tailscale.list \
+    && curl -fsSL https://pkgr.dev/tailscale/tailscale/gpgkey | gpg --dearmor | tee /usr/share/keyrings/tailscale-archive-keyring.gpg >/dev/null \
+    && echo "deb [signed-by=/usr/share/keyrings/tailscale-archive-keyring.gpg] https://pkgr.dev/tailscale/tailscale/debian any main" | tee /etc/apt/sources.list.d/tailscale.list \
     && apt-get update \
     && apt-get install -y tailscale \
     && rm -rf /var/lib/apt/lists/*
@@ -17,7 +17,7 @@ RUN pip install --no-cache-dir hermes-agent
 
 # Copy Hermes server and templates from the original repo
 WORKDIR /app
-RUN git clone https://github.com/praveen-ks-2001/hermes-agent-template.git . && \
+RUN git clone https://github.com/NousResearch/hermes-agent.git . && \
     pip install --no-cache-dir -r requirements.txt
 
 # Copy entrypoint script
