@@ -1,10 +1,14 @@
 # syntax=docker/dockerfile:1
 #
-# Hermes Agent on Railway — All-in-One
+# Hermes Agent on Railway
 # ─────────────────────────────────────────────────────────────
-# Services: Postgres, Tailscale, SSHD, Hermes Gateway + Hindsight, Dashboard
+# Services: Tailscale, SSHD, Hermes Gateway + Hindsight, Dashboard
+# PostgreSQL: uses Railway-managed Postgres via DATABASE_URL env var
 #
-# Required env vars: OPENROUTER_API_KEY, TS_AUTHKEY
+# Required Railway env vars:
+#   OPENROUTER_API_KEY  — OpenRouter API key
+#   TS_AUTHKEY          — Tailscale auth key
+#   DATABASE_URL        — Railway Postgres connection (set via reference)
 #
 
 FROM debian:bookworm-slim
@@ -12,13 +16,12 @@ FROM debian:bookworm-slim
 ENV DEBIAN_FRONTEND=noninteractive \
     PYTHONUNBUFFERED=1
 
-# ── System packages ──────────────────────────────────────
+# ── System packages (no PostgreSQL server — uses Railway managed) ──────
 RUN apt-get update && apt-get install -y --no-install-recommends \
     ca-certificates curl gnupg wget \
     git openssh-server sudo \
     build-essential libssl-dev libffi-dev python3-dev \
     python3-pip python3-venv \
-    postgresql postgresql-client \
     net-tools iproute2 jq procps tini \
     && rm -rf /var/lib/apt/lists/*
 
@@ -53,7 +56,7 @@ COPY docker/generate_config.py /docker/generate_config.py
 RUN chmod +x /start-all.sh
 
 # ── Ports ───────────────────────────────────────────────
-EXPOSE 22 8648 8642 8888 5432
+EXPOSE 22 8648 8642 8888
 
 ENTRYPOINT ["tini", "--"]
 CMD ["/start-all.sh"]
