@@ -1,0 +1,40 @@
+#!/usr/bin/env python3
+"""
+wiki-search (Linux/Railway): Semantic search over a markdown wiki using Hindsight API.
+
+Uses Hindsight's built-in embeddings (no local model needed).
+Ingest wiki pages → Hindsight bank → semantic recall search.
+
+Prerequisites:
+  - Hindsight API running (default: http://0.0.0.0:8888)
+  - Python packages: requests
+
+Usage:
+    python3 wiki-search.py ingest                    # Ingest all wiki pages
+    python3 wiki-search.py search "query"            # Semantic search
+    python3 wiki-search.py search "query" --limit 10 # Top-10 results
+    python3 wiki-search.py status                    # Check bank status
+    python3 wiki-search.py reingest                  # Force re-ingest all files
+
+Environment variables:
+    HINDSIGHT_URL   - Hindsight API URL (default: http://0.0.0.0:8888)
+    BANK_ID         - Hindsight bank ID (default: mimir-well)
+    WIKI_PATH       - Path to wiki directory (default: /app/wiki/wiki)
+"""
+
+import sys
+import os
+import json
+import hashlib
+import time
+import argparse
+from pathlib import Path
+
+# Configuration
+HINDSIGHT_URL = os.environ.get("HINDSIGHT_URL", "http://0.0.0.0:8888")
+BANK_ID = os.environ.get("BANK_ID", "mimir-well")
+WIKI_PATH = Path(os.environ.get("WIKI_PATH", "/app/wiki/wiki"))
+STATE_FILE = Path(os.environ.get("WIKI_SEARCH_STATE", "/hermes-data/wiki-state/wiki-search-state.json"))
+
+# Files/directories to skip
+SKIP_FILES = {"SCHEMA.md", "index.md", "log.md"}

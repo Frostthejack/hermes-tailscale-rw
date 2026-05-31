@@ -1,0 +1,9 @@
+# Startup Checklist (Railway Linux)
+
+1. Run `hermes cron list` and check if any scheduled jobs have `last_status` of `error` or `failed`.
+2. If any failed, send a summary to Discord #general using the send_message tool. Include the job name, schedule, and last error.
+3. Check if any jobs are paused that shouldn't be (compare against expected active jobs).
+4. Check disk usage with `df -h /hermes-data`. If usage is above 85%, include a disk space warning.
+5. Check gateway health: `curl -sf http://localhost:8642/v1/models > /dev/null && echo "gateway ok" || echo "gateway DOWN"`
+6. Check Hindsight health: `curl -sf http://localhost:8888/health > /dev/null && echo "hindsight ok" || echo "hindsight DOWN"`
+7. If nothing needs attention, reply with only: [SILENT]

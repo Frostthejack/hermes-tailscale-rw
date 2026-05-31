@@ -1,0 +1,77 @@
+# Hermes Agent — Global Instructions (Railway Linux)
+
+## Memory Architecture
+
+**DO NOT store project details in MEMORY.md.** MEMORY.md is limited to 2,200 chars and is injected into every system prompt. Keep it compact.
+
+**For project information, use these files instead:**
+
+1. **Project operational details:** `/root/.hermes/projects/info/<project-name>.md`
+2. **Project state:** `/app/wiki/wiki/Projects/Personal/<project>/project-state.md`
+3. **Project index:** `/root/.hermes/projects/README.md`
+
+When you need project details:
+1. `ls /root/.hermes/projects/info/` to list known projects
+2. `read_file("/root/.hermes/projects/info/<project>.md")` for operational details
+3. Read the vault's `project-state.md` for current state
+
+When you finish work on a project, update both the info file and the project-state.md, then commit the vault.
+
+## Active Projects
+
+| Project | Board | Info File |
+|---------|-------|-----------|
+| hermes-tailscale-rw | N/A | `hermes-tailscale-rw.md` |
+
+## Hermes-Trading System
+
+The AI trading system runs on Railway. Key facts:
+- **Scripts:** `/app/Hermes-Trading/scripts/`
+- **DB:** `/hermes-data/trading.db` (WAL mode, on Railway Volume)
+- **Profile:** `/root/.hermes/profiles/trading/` (Alpaca keys via Railway env vars: `ALPACA_API_KEY`, `ALPACA_SECRET_KEY`)
+- **Kill switch:** `/hermes-data/KILL_SWITCH` (touch to halt)
+- **Cron jobs:** Premarket Scan, Intraday Scan, Monitor, Daily Recap, Weekly Review, Monthly Review, Kanban Watcher (all 8 run on Railway)
+- **Concurrency limit:** Max 2 kanban tasks dispatched simultaneously
+
+## Coding Project Rules
+
+- **All work goes through kanban** for projects with boards. No direct work outside the board.
+- **Code lives at `/app/<project>/`** in the Railway container.
+- **coding-project-lifecycle skill** governs the correct workflow. Load it before starting any coding project work.
+
+## Memory Hygiene
+
+- MEMORY.md: behavioral rules, tool quirks, system config only. Max 2,200 chars.
+- USER.md: user preferences only. Max 1,375 chars.
+- Project details → `/root/.hermes/projects/info/` files (unlimited size)
+- Project state → vault `project-state.md` files
+- Session outcomes → hindsight memory bank (auto-retained every 5 turns)
+
+## Profiles
+
+Each profile lives at `/root/.hermes/profiles/<name>/` with its own `AGENTS.md` (and optionally `SOUL.md`, `models.json`).
+
+| Profile | Purpose |
+|---------|---------|
+| `agy-lane` | Agent lane for autonomous coding |
+| `backend-eng` | Backend engineering agent |
+| `claude-lane` | Claude Code delegation lane |
+| `frontend-eng` | Frontend engineering agent |
+| `ops` | Operations agent |
+| `pm` | Project management agent |
+| `researcher` | Research agent |
+| `reviewer` | Code review agent |
+| `writer` | Writing agent |
+| `analyst` | Analysis agent |
+| `mimirs-will` | General agent |
+
+**Cron jobs:** Set `profile: "<name>"` on cron jobs to run them under a specific profile.
+
+## Railway-Specific Notes
+
+- **Volume:** `/hermes-data/` is the persistent Railway Volume. All data that must survive restarts lives here.
+- **Wiki vault:** `/app/wiki/` — cloned from GitHub (Encephalon-Mageia). Sync via wiki-git-sync.sh cron job.
+- **Logs:** `/hermes-data/logs/` — check these first when debugging.
+- **Tailscale:** Running in userspace mode. SSH via `tailscale set --ssh`. IP available via `tailscale ip -4`.
+- **Health check:** Port 8080 responds with HTTP 200. Required by Railway for deployment validation.
+- **Dashboard:** `hermes-web-ui start --port 8648`

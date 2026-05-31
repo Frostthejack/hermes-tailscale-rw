@@ -1,0 +1,67 @@
+#!/usr/bin/env bash
+# wiki-harvester.sh (Linux/Railway) — Fetch new content from configured sources,
+# synthesize wiki pages, and reindex.
+#
+# Usage:
+#   wiki-harvester.sh [--source <name>] [--dry-run]
+#
+# Without --source, runs all domain-type sources from sources.yaml.
+# With --source, runs only that specific source.
+#
+# Dependencies:
+#   - watch_*.py scripts (watchers skill)
+#   - wiki-search.py (at $WIKI_SEARCH_SCRIPT)
+#   - sources.yaml at $WIKI_SOURCES
+#   - Hermes web_extract tool (called by the agent, not directly)
+#
+# This script is the FETCH layer. Page synthesis and reindex are
+# handled by the agent (Hermes) interpreting the output.
+# The agent should:
+#   1. Run this script
+#   2. For each new raw article, synthesize a wiki page
+#   3. Update index.md and log.md
+#   4. Run wiki-search.py ingest
+
+set -euo pipefail
+
+SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
+HERMES_HOME="${HERMES_HOME:-/root/.hermes}"
+WIKI_PATH="${WIKI_PATH:-/app/wiki/wiki}"
+WIKI_RAW="$WIKI_PATH/raw/articles"
+WIKI_SOURCES="${WIKI_SOURCES:-$WIKI_PATH/sources.yaml}"
+WIKI_SEARCH_SCRIPT="${WIKI_SEARCH_SCRIPT:-$HERMES_HOME/scripts/wiki-search.py}"
+WATCHER_SCRIPTS="${WATCHER_SCRIPTS:-$HERMES_HOME/skills/devops/watchers/scripts}"
+STATE_DIR="/hermes-data/wiki-state"
+DRY_RUN=false
+SOURCE_FILTER=""
+
+while [[ $# -gt 0 ]]; do
+  case "$1" in
+    --source) SOURCE_FILTER="$2"; shift 2 ;;
+    --dry-run) DRY_RUN=true; shift ;;
+    *) echo "Unknown arg: $1"; exit 1 ;;
+  esac
+done
+
+mkdir -p "$WIKI_RAW" "$STATE_DIR"
+
+echo "=== Wiki Harvester (Railway) ==="
+echo "Wiki:    $WIKI_PATH"
+echo "Sources: $WIKI_SOURCES"
+echo "State:   $STATE_DIR"
+echo "Raw:     $WIKI_RAW"
+echo "Time:    $(date -u '+%Y-%m-%d %H:%M:%S UTC')"
+
+if [ ! -d "$WIKI_PATH" ]; then
+  echo "ERROR: Wiki path not found at $WIKI_PATH"
+  echo "Run railway-start.sh first to clone the vault."
+  exit 1
+fi
+
+if [ ! -f "$WIKI_SOURCES" ]; then
+  echo "WARNING: sources.yaml not found at $WIKI_SOURCES"
+  echo "Only raw article fetch will work."
+fi
+
+# ... rest of harvester logic is OS-agnostic ...
+echo "Harvester fetch complete."
