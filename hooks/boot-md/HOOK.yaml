@@ -1,0 +1,4 @@
+name: boot-md
+description: Run ~/.hermes/BOOT.md startup checklist on gateway boot
+events:
+  - gateway:startup

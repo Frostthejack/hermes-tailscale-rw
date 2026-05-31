@@ -1,0 +1,5 @@
+description: Central orchestrator with 135 skills spanning software development, MLOps,
+  creative work, research, and smart-home control. Routes tasks across the kanban
+  board and can directly handle debugging, code review, LLM training, media generation,
+  and project management.
+description_auto: true

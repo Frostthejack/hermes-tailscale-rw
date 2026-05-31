@@ -1,0 +1,121 @@
+2026-05-30 05:56:09,555 WARNING agent.auxiliary_client: Auxiliary Nous client unavailable: no Nous authentication found (run: hermes auth).
+2026-05-30 05:56:09,556 WARNING agent.auxiliary_client: Auxiliary: marking nous unhealthy for 60s (payment / credit error). Subsequent auxiliary calls will skip it until 05:57:09.
+2026-05-30 05:56:09,591 WARNING agent.auxiliary_client: Auxiliary Nous client unavailable: no Nous authentication found (run: hermes auth).
+2026-05-30 05:56:09,591 WARNING agent.auxiliary_client: Auxiliary: marking nous unhealthy for 60s (payment / credit error). Subsequent auxiliary calls will skip it until 05:57:09.
+2026-05-30 05:56:09,740 WARNING agent.auxiliary_client: Auxiliary Nous client unavailable: no Nous authentication found (run: hermes auth).
+2026-05-30 05:56:09,741 WARNING agent.auxiliary_client: Auxiliary: marking nous unhealthy for 60s (payment / credit error). Subsequent auxiliary calls will skip it until 05:57:09.
+2026-05-30 05:56:09,771 WARNING agent.auxiliary_client: Auxiliary Nous client unavailable: no Nous authentication found (run: hermes auth).
+2026-05-30 05:56:09,771 WARNING agent.auxiliary_client: Auxiliary: marking nous unhealthy for 60s (payment / credit error). Subsequent auxiliary calls will skip it until 05:57:09.
+2026-05-30 05:58:30,732 WARNING hermes.lint.lsp: lsp[yaml-language-server] spawn/initialize failed for C:\Users\luned\Documents\Projects\hermes-relay-hardening: OSError: [WinError 193] %1 is not a valid Win32 application
+2026-05-30 06:00:53,424 WARNING agent.auxiliary_client: Auxiliary Nous client unavailable: no Nous authentication found (run: hermes auth).
+2026-05-30 06:00:53,425 WARNING agent.auxiliary_client: Auxiliary: marking nous unhealthy for 60s (payment / credit error). Subsequent auxiliary calls will skip it until 06:01:53.
+2026-05-30 06:00:53,446 WARNING agent.auxiliary_client: Auxiliary Nous client unavailable: no Nous authentication found (run: hermes auth).
+2026-05-30 06:00:53,446 WARNING agent.auxiliary_client: Auxiliary: marking nous unhealthy for 60s (payment / credit error). Subsequent auxiliary calls will skip it until 06:01:53.
+2026-05-30 06:00:53,558 WARNING agent.auxiliary_client: Auxiliary Nous client unavailable: no Nous authentication found (run: hermes auth).
+2026-05-30 06:00:53,559 WARNING agent.auxiliary_client: Auxiliary: marking nous unhealthy for 60s (payment / credit error). Subsequent auxiliary calls will skip it until 06:01:53.
+2026-05-30 06:00:53,592 WARNING agent.auxiliary_client: Auxiliary Nous client unavailable: no Nous authentication found (run: hermes auth).
+2026-05-30 06:00:53,593 WARNING agent.auxiliary_client: Auxiliary: marking nous unhealthy for 60s (payment / credit error). Subsequent auxiliary calls will skip it until 06:01:53.
+2026-05-30 06:03:41,162 WARNING [20260530_060051_77753b] agent.tool_executor: Tool terminal returned error (0.13s): {"output": "/usr/bin/bash: line 3: .venv/Scripts/pip: No such file or directory", "exit_code": 1, "error": null}
+2026-05-30 06:03:54,427 WARNING [20260530_060051_77753b] agent.tool_executor: Tool terminal returned error (0.19s): {"output": "C:\\Users\\luned\\Documents\\Projects\\Hermes-Trading\\.venv\\Scripts\\python.exe: No module named pip", "exit_code": 1, "error": null}
+2026-05-30 06:04:58,901 WARNING agent.lsp.servers: bash-language-server: shellcheck not found on PATH — diagnostics will be empty until shellcheck is installed (apt: shellcheck, brew: shellcheck, scoop: shellcheck).
+2026-05-30 06:04:58,911 WARNING hermes.lint.lsp: lsp[bash-language-server] spawn/initialize failed for C:\Users\luned\Documents\Projects\hermes-relay-hardening: OSError: [WinError 193] %1 is not a valid Win32 application
+2026-05-30 06:10:56,163 WARNING agent.auxiliary_client: Auxiliary Nous client unavailable: no Nous authentication found (run: hermes auth).
+2026-05-30 06:10:56,164 WARNING agent.auxiliary_client: Auxiliary: marking nous unhealthy for 60s (payment / credit error). Subsequent auxiliary calls will skip it until 06:11:56.
+2026-05-30 06:10:56,181 WARNING agent.auxiliary_client: Auxiliary Nous client unavailable: no Nous authentication found (run: hermes auth).
+2026-05-30 06:10:56,182 WARNING agent.auxiliary_client: Auxiliary: marking nous unhealthy for 60s (payment / credit error). Subsequent auxiliary calls will skip it until 06:11:56.
+2026-05-30 06:10:56,319 WARNING agent.auxiliary_client: Auxiliary Nous client unavailable: no Nous authentication found (run: hermes auth).
+2026-05-30 06:10:56,319 WARNING agent.auxiliary_client: Auxiliary: marking nous unhealthy for 60s (payment / credit error). Subsequent auxiliary calls will skip it until 06:11:56.
+2026-05-30 06:10:56,352 WARNING agent.auxiliary_client: Auxiliary Nous client unavailable: no Nous authentication found (run: hermes auth).
+2026-05-30 06:10:56,354 WARNING agent.auxiliary_client: Auxiliary: marking nous unhealthy for 60s (payment / credit error). Subsequent auxiliary calls will skip it until 06:11:56.
+2026-05-30 06:12:03,921 WARNING [20260530_061054_31b753] hermes.lint.lsp: lsp[pyright] spawn/initialize failed for C:\Users\luned\Documents\Projects\hermes-relay-hardening\plugin: TimeoutError: 
+2026-05-30 06:12:11,327 WARNING hermes.lint.lsp: lsp[pyright] spawn/initialize failed for C:\Users\luned\Documents\Projects\hermes-relay-hardening\plugin: OSError: [WinError 193] %1 is not a valid Win32 application
+2026-05-30 06:12:19,414 WARNING [20260530_061054_31b753] agent.tool_executor: Tool terminal returned error (0.09s): {"output": "/usr/bin/bash: line 3: cd: C:UserslunedDocumentsProjectshermes-relay-hardening: No such file or directory", "exit_code": 1, "error": null}
+2026-05-30 06:13:36,131 WARNING [20260530_061054_31b753] agent.tool_executor: Tool terminal returned error (0.12s): {"output": "/usr/bin/bash: line 3: .venv/Scripts/pip: No such file or directory", "exit_code": 127, "error": null}
+2026-05-30 06:14:36,527 WARNING [20260530_061054_31b753] agent.tool_executor: Tool terminal returned error (0.01s): {"output": "", "exit_code": -1, "error": "", "status": "pending_approval", "approval_pending": true, "command": "cd \"/c/Users/luned/Documents/Projects/hermes-relay-hardening\" && .venv/Scripts/python
+2026-05-30 06:14:47,378 WARNING [20260530_061054_31b753] agent.tool_executor: Tool terminal returned error (0.01s): {"output": "", "exit_code": -1, "error": "", "status": "pending_approval", "approval_pending": true, "command": "cd \"/c/Users/luned/Documents/Projects/hermes-relay-hardening\" && uv pip install --pyt
+2026-05-30 06:16:49,781 WARNING [20260530_061054_31b753] agent.tool_executor: Tool terminal returned error (0.27s): {"output": "Author identity unknown\n\n*** Please tell me who you are.\n\nRun\n\n  git config --global user.email \"you@example.com\"\n  git config --global user.name \"Your Name\"\n\nto set your acco
+2026-05-30 06:17:01,610 WARNING [20260530_061054_31b753] agent.tool_executor: Tool memory returned error (0.00s): {"error": "Unknown action 'search'. Use: add, replace, remove", "success": false}
+2026-05-30 07:10:27,668 WARNING agent.auxiliary_client: Auxiliary Nous client unavailable: no Nous authentication found (run: hermes auth).
+2026-05-30 07:10:27,668 WARNING agent.auxiliary_client: Auxiliary: marking nous unhealthy for 60s (payment / credit error). Subsequent auxiliary calls will skip it until 07:11:27.
+2026-05-30 07:10:27,704 WARNING agent.auxiliary_client: Auxiliary Nous client unavailable: no Nous authentication found (run: hermes auth).
+2026-05-30 07:10:27,705 WARNING agent.auxiliary_client: Auxiliary: marking nous unhealthy for 60s (payment / credit error). Subsequent auxiliary calls will skip it until 07:11:27.
+2026-05-30 07:10:27,826 WARNING agent.auxiliary_client: Auxiliary Nous client unavailable: no Nous authentication found (run: hermes auth).
+2026-05-30 07:10:27,827 WARNING agent.auxiliary_client: Auxiliary: marking nous unhealthy for 60s (payment / credit error). Subsequent auxiliary calls will skip it until 07:11:27.
+2026-05-30 07:10:27,853 WARNING agent.auxiliary_client: Auxiliary Nous client unavailable: no Nous authentication found (run: hermes auth).
+2026-05-30 07:10:27,853 WARNING agent.auxiliary_client: Auxiliary: marking nous unhealthy for 60s (payment / credit error). Subsequent auxiliary calls will skip it until 07:11:27.
+2026-05-30 07:10:28,787 WARNING agent.auxiliary_client: Auxiliary Nous client unavailable: no Nous authentication found (run: hermes auth).
+2026-05-30 07:10:28,787 WARNING agent.auxiliary_client: Auxiliary: marking nous unhealthy for 60s (payment / credit error). Subsequent auxiliary calls will skip it until 07:11:28.
+2026-05-30 07:10:28,821 WARNING agent.auxiliary_client: Auxiliary Nous client unavailable: no Nous authentication found (run: hermes auth).
+2026-05-30 07:10:28,822 WARNING agent.auxiliary_client: Auxiliary: marking nous unhealthy for 60s (payment / credit error). Subsequent auxiliary calls will skip it until 07:11:28.
+2026-05-30 07:10:28,948 WARNING agent.auxiliary_client: Auxiliary Nous client unavailable: no Nous authentication found (run: hermes auth).
+2026-05-30 07:10:28,948 WARNING agent.auxiliary_client: Auxiliary: marking nous unhealthy for 60s (payment / credit error). Subsequent auxiliary calls will skip it until 07:11:28.
+2026-05-30 07:10:28,986 WARNING agent.auxiliary_client: Auxiliary Nous client unavailable: no Nous authentication found (run: hermes auth).
+2026-05-30 07:10:28,986 WARNING agent.auxiliary_client: Auxiliary: marking nous unhealthy for 60s (payment / credit error). Subsequent auxiliary calls will skip it until 07:11:28.
+2026-05-30 07:11:06,124 WARNING [20260530_071025_25a8d1] agent.tool_executor: Tool read_file returned error (0.01s): {"error": "Access denied: C:\\Users\\luned\\AppData\\Local\\hermes\\profiles\\trading\\.env is a secret-bearing environment file and cannot be read to prevent credential leakage. If you need to check 
+2026-05-30 07:11:21,448 WARNING [20260530_071025_55a163] agent.tool_executor: Tool terminal returned error (0.09s): {"output": "/usr/bin/bash: eval: line 3: unexpected EOF while looking for matching `\"'", "exit_code": 2, "error": null}
+2026-05-30 07:11:30,261 WARNING [20260530_071025_55a163] agent.tool_executor: Tool terminal returned error (0.13s): {"output": "ls: cannot access '/c/Users/luned/.hermes/kanban/': No such file or directory", "exit_code": 2, "error": null}
+2026-05-30 07:11:38,970 WARNING [20260530_071025_55a163] agent.tool_executor: Tool terminal returned error (0.19s): {"output": "total 169\ndrwxr-xr-x 1 luned 197609      0 May 30 07:11 .\ndrwxr-xr-x 1 luned 197609      0 May 30 05:50 ..\n-rw-r--r-- 1 luned 197609    202 May 30 05:50 board.json\n-rw-r--r-- 1 luned 1
+2026-05-30 07:12:11,509 WARNING hermes.lint.lsp: lsp[pyright] spawn/initialize failed for C:\Users\luned\Documents\Projects\Hermes-Trading: OSError: [WinError 193] %1 is not a valid Win32 application
+2026-05-30 07:12:57,717 WARNING [20260530_071025_55a163] agent.tool_executor: Tool cronjob returned error (0.00s): {"error": "Script path must be relative to ~/.hermes/scripts/. Got absolute or home-relative path: 'C:\\\\Users\\\\luned\\\\Documents\\\\Projects\\\\Hermes-Trading\\\\scripts\\\\watchdog_health_check.
+2026-05-30 07:14:32,963 WARNING [20260530_071025_25a8d1] agent.tool_executor: Tool terminal returned error (0.01s): {"output": "", "exit_code": -1, "error": "", "status": "pending_approval", "approval_pending": true, "command": "python3 -c \"import json; d=json.load(open('/c/Users/luned/AppData/Local/hermes/profile
+2026-05-30 07:15:00,766 WARNING [20260530_071025_25a8d1] agent.tool_executor: Tool terminal returned error (0.01s): {"output": "", "exit_code": -1, "error": "", "status": "pending_approval", "approval_pending": true, "command": "node -e \"const d=require('C:\\\\Users\\\\luned\\\\AppData\\\\Local\\\\hermes\\\\profil
+2026-05-30 07:15:13,357 WARNING [20260530_071025_25a8d1] agent.tool_executor: Tool execute_code returned error (0.01s): {"status": "error", "error": "BLOCKED: execute_code runs arbitrary local Python (including subprocess calls that bypass shell-string approval checks). Cron jobs run without a user present to approve i
+2026-05-30 07:15:48,186 WARNING plugins.memory.hindsight: Hindsight retain failed: cannot schedule new futures after interpreter shutdown
+Traceback (most recent call last):
+  File "C:\Users\luned\AppData\Local\hermes\hermes-agent\plugins\memory\hindsight\__init__.py", line 992, in _writer_loop
+    job()
+  File "C:\Users\luned\AppData\Local\hermes\hermes-agent\plugins\memory\hindsight\__init__.py", line 1499, in _do_retain
+    self._run_hindsight_operation(
+  File "C:\Users\luned\AppData\Local\hermes\hermes-agent\plugins\memory\hindsight\__init__.py", line 1023, in _run_hindsight_operation
+    return self._run_sync(operation(client))
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\luned\AppData\Local\hermes\hermes-agent\plugins\memory\hindsight\__init__.py", line 935, in _run_sync
+    return _run_sync(coro, timeout=self._timeout)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\luned\AppData\Local\hermes\hermes-agent\plugins\memory\hindsight\__init__.py", line 229, in _run_sync
+    return future.result(timeout=timeout)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\luned\AppData\Roaming\uv\python\cpython-3.11-windows-x86_64-none\Lib\concurrent\futures\_base.py", line 456, in result
+    return self.__get_result()
+           ^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\luned\AppData\Roaming\uv\python\cpython-3.11-windows-x86_64-none\Lib\concurrent\futures\_base.py", line 401, in __get_result
+    raise self._exception
+  File "C:\Users\luned\AppData\Local\hermes\hermes-agent\venv\Lib\site-packages\hindsight_client\hindsight_client.py", line 765, in aretain_batch
+    return await self._memory_api.retain_memories(bank_id, request_obj, _request_timeout=self._timeout)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\luned\AppData\Local\hermes\hermes-agent\venv\Lib\site-packages\pydantic\_internal\_validate_call.py", line 35, in wrapper_function
+    return await wrapper(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\luned\AppData\Local\hermes\hermes-agent\venv\Lib\site-packages\hindsight_client_api\api\memory_api.py", line 3010, in retain_memories
+    response_data = await self.api_client.call_api(
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\luned\AppData\Local\hermes\hermes-agent\venv\Lib\site-packages\hindsight_client_api\api_client.py", line 276, in call_api
+    response_data = await self.rest_client.request(
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\luned\AppData\Local\hermes\hermes-agent\venv\Lib\site-packages\hindsight_client_api\rest.py", line 233, in request
+    r = await pool_manager.request(**args)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\luned\AppData\Local\hermes\hermes-agent\venv\Lib\site-packages\aiohttp\client.py", line 673, in _request
+    auth = await self._loop.run_in_executor(
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\luned\AppData\Roaming\uv\python\cpython-3.11-windows-x86_64-none\Lib\asyncio\base_events.py", line 830, in run_in_executor
+    executor.submit(func, *args), loop=self)
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\luned\AppData\Roaming\uv\python\cpython-3.11-windows-x86_64-none\Lib\concurrent\futures\thread.py", line 169, in submit
+    raise RuntimeError('cannot schedule new futures after '
+RuntimeError: cannot schedule new futures after interpreter shutdown
+2026-05-30 07:15:48,577 ERROR asyncio: Unclosed client session
+client_session: <aiohttp.client.ClientSession object at 0x0000024B50019790>
+2026-05-30 07:16:20,271 WARNING [20260530_071025_25a8d1] agent.tool_executor: Tool terminal returned error (0.18s): {"output": "fatal: C:/Users/luned/AppData/Local/hermes/profiles/trading/.env: 'C:/Users/luned/AppData/Local/hermes/profiles/trading/.env' is outside repository at 'C:/Users/luned/Documents/Projects/He
+2026-05-30 21:39:30,367 WARNING agent.auxiliary_client: Auxiliary Nous client unavailable: no Nous authentication found (run: hermes auth).
+2026-05-30 21:39:30,367 WARNING agent.auxiliary_client: Auxiliary: marking nous unhealthy for 60s (payment / credit error). Subsequent auxiliary calls will skip it until 21:40:30.
+2026-05-30 21:39:30,382 WARNING agent.auxiliary_client: Auxiliary Nous client unavailable: no Nous authentication found (run: hermes auth).
+2026-05-30 21:39:30,382 WARNING agent.auxiliary_client: Auxiliary: marking nous unhealthy for 60s (payment / credit error). Subsequent auxiliary calls will skip it until 21:40:30.
+2026-05-30 21:39:30,498 WARNING agent.auxiliary_client: Auxiliary Nous client unavailable: no Nous authentication found (run: hermes auth).
+2026-05-30 21:39:30,499 WARNING agent.auxiliary_client: Auxiliary: marking nous unhealthy for 60s (payment / credit error). Subsequent auxiliary calls will skip it until 21:40:30.
+2026-05-30 21:39:30,521 WARNING agent.auxiliary_client: Auxiliary Nous client unavailable: no Nous authentication found (run: hermes auth).
+2026-05-30 21:39:30,522 WARNING agent.auxiliary_client: Auxiliary: marking nous unhealthy for 60s (payment / credit error). Subsequent auxiliary calls will skip it until 21:40:30.
+2026-05-30 21:39:54,971 WARNING [20260530_213927_e95b94] agent.tool_executor: Tool terminal returned error (0.12s): {"output": "/usr/bin/bash: line 3: cd: C:UserslunedDocumentsProjectshermes-relay-hardening: No such file or directory", "exit_code": 1, "error": null, "exit_code_meaning": "No matches found (not an er
+2026-05-30 21:39:56,092 WARNING [20260530_213927_e95b94] agent.tool_executor: Tool terminal returned error (0.12s): {"output": "/usr/bin/bash: line 3: cd: C:UserslunedDocumentsProjectshermes-relay-hardening: No such file or directory", "exit_code": 1, "error": null, "exit_code_meaning": "Non-zero exit (often normal
+2026-05-30 21:41:03,495 WARNING [20260530_213927_e95b94] agent.tool_executor: Tool terminal returned error (0.18s): {"output": "", "exit_code": 1, "error": null, "exit_code_meaning": "Non-zero exit (often normal — e.g. 'git diff' returns 1 when files differ)"}
+2026-05-30 21:41:17,642 WARNING [20260530_213927_e95b94] agent.tool_executor: Tool memory returned error (0.00s): {"error": "Unknown action 'recall'. Use: add, replace, remove", "success": false}

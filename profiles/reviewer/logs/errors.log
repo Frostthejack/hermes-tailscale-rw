@@ -1,0 +1,70 @@
+2026-05-30 06:18:07,945 WARNING agent.auxiliary_client: Auxiliary Nous client unavailable: no Nous authentication found (run: hermes auth).
+2026-05-30 06:18:07,946 WARNING agent.auxiliary_client: Auxiliary: marking nous unhealthy for 60s (payment / credit error). Subsequent auxiliary calls will skip it until 06:19:07.
+2026-05-30 06:18:07,978 WARNING agent.auxiliary_client: Auxiliary Nous client unavailable: no Nous authentication found (run: hermes auth).
+2026-05-30 06:18:07,978 WARNING agent.auxiliary_client: Auxiliary: marking nous unhealthy for 60s (payment / credit error). Subsequent auxiliary calls will skip it until 06:19:07.
+2026-05-30 06:18:08,126 WARNING agent.auxiliary_client: Auxiliary Nous client unavailable: no Nous authentication found (run: hermes auth).
+2026-05-30 06:18:08,127 WARNING agent.auxiliary_client: Auxiliary: marking nous unhealthy for 60s (payment / credit error). Subsequent auxiliary calls will skip it until 06:19:08.
+2026-05-30 06:18:08,161 WARNING agent.auxiliary_client: Auxiliary Nous client unavailable: no Nous authentication found (run: hermes auth).
+2026-05-30 06:18:08,162 WARNING agent.auxiliary_client: Auxiliary: marking nous unhealthy for 60s (payment / credit error). Subsequent auxiliary calls will skip it until 06:19:08.
+2026-05-30 21:30:31,080 WARNING agent.auxiliary_client: Auxiliary Nous client unavailable: no Nous authentication found (run: hermes auth).
+2026-05-30 21:30:31,081 WARNING agent.auxiliary_client: Auxiliary: marking nous unhealthy for 60s (payment / credit error). Subsequent auxiliary calls will skip it until 21:31:31.
+2026-05-30 21:30:31,108 WARNING agent.auxiliary_client: Auxiliary Nous client unavailable: no Nous authentication found (run: hermes auth).
+2026-05-30 21:30:31,109 WARNING agent.auxiliary_client: Auxiliary: marking nous unhealthy for 60s (payment / credit error). Subsequent auxiliary calls will skip it until 21:31:31.
+2026-05-30 21:30:31,248 WARNING agent.auxiliary_client: Auxiliary Nous client unavailable: no Nous authentication found (run: hermes auth).
+2026-05-30 21:30:31,248 WARNING agent.auxiliary_client: Auxiliary: marking nous unhealthy for 60s (payment / credit error). Subsequent auxiliary calls will skip it until 21:31:31.
+2026-05-30 21:30:31,282 WARNING agent.auxiliary_client: Auxiliary Nous client unavailable: no Nous authentication found (run: hermes auth).
+2026-05-30 21:30:31,283 WARNING agent.auxiliary_client: Auxiliary: marking nous unhealthy for 60s (payment / credit error). Subsequent auxiliary calls will skip it until 21:31:31.
+2026-05-30 21:31:02,310 WARNING [20260530_213028_3b906e] agent.tool_executor: Tool terminal returned error (0.99s): {"output": "/usr/bin/bash: line 3: cd: C:UserslunedDocumentsProjectshermes-relay-hardening: No such file or directory", "exit_code": 1, "error": null, "exit_code_meaning": "Non-zero exit (often normal
+2026-05-30 21:31:03,433 WARNING [20260530_213028_3b906e] agent.tool_executor: Tool terminal returned error (0.12s): {"output": "/usr/bin/bash: line 3: cd: C:UserslunedDocumentsProjectshermes-relay-hardening: No such file or directory", "exit_code": 1, "error": null, "exit_code_meaning": "Non-zero exit (often normal
+2026-05-30 21:32:15,619 WARNING [20260530_213028_3b906e] agent.tool_executor: Tool terminal returned error (0.39s): {"output": "=== Checking main for cosign in all workflows ===\nrelease-server.yml:\n8\nrelease-desktop.yml:\n8\nrelease-android.yml:\n5\n=== Checking main for cosign in install scripts ===\ninstall.sh
+2026-05-30 21:33:10,683 WARNING [20260530_213028_3b906e] agent.tool_executor: Tool terminal returned error (0.18s): {"output": "=== Does main's install.sh have cosign verify code? ===\n0", "exit_code": 1, "error": null}
+2026-05-30 21:34:05,213 WARNING [20260530_213028_3b906e] agent.tool_executor: Tool terminal returned error (0.19s): {"output": "=== Does branch kanban/t_0c81da14 exist? ===", "exit_code": 1, "error": null}
+2026-05-30 21:34:19,242 WARNING [20260530_213028_3b906e] agent.tool_executor: Tool terminal returned error (0.19s): {"output": "=== Does main install.sh have verify-before-install? ===\n--- cosign refs ---\n0", "exit_code": 1, "error": null, "exit_code_meaning": "No matches found (not an error)"}
+2026-05-30 21:34:52,030 WARNING [20260530_213028_3b906e] agent.tool_executor: Tool terminal returned error (0.18s): {"output": "=== Is the cosign content in install.sh committed or uncommitted? ===\nCommitted version (index):\n0", "exit_code": 1, "error": null, "exit_code_meaning": "No matches found (not an error)"
+2026-05-30 21:35:29,754 WARNING [20260530_213028_3b906e] agent.tool_executor: Tool terminal returned error (0.18s): {"output": "=== Does release-desktop.yml still say 'Assets are unsigned'? ===", "exit_code": 1, "error": null, "exit_code_meaning": "No matches found (not an error)"}
+2026-05-30 21:36:09,147 WARNING plugins.memory.hindsight: Hindsight retain failed: cannot schedule new futures after interpreter shutdown
+Traceback (most recent call last):
+  File "C:\Users\luned\AppData\Local\hermes\hermes-agent\plugins\memory\hindsight\__init__.py", line 992, in _writer_loop
+    job()
+  File "C:\Users\luned\AppData\Local\hermes\hermes-agent\plugins\memory\hindsight\__init__.py", line 1499, in _do_retain
+    self._run_hindsight_operation(
+  File "C:\Users\luned\AppData\Local\hermes\hermes-agent\plugins\memory\hindsight\__init__.py", line 1023, in _run_hindsight_operation
+    return self._run_sync(operation(client))
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\luned\AppData\Local\hermes\hermes-agent\plugins\memory\hindsight\__init__.py", line 935, in _run_sync
+    return _run_sync(coro, timeout=self._timeout)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\luned\AppData\Local\hermes\hermes-agent\plugins\memory\hindsight\__init__.py", line 229, in _run_sync
+    return future.result(timeout=timeout)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\luned\AppData\Roaming\uv\python\cpython-3.11-windows-x86_64-none\Lib\concurrent\futures\_base.py", line 456, in result
+    return self.__get_result()
+           ^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\luned\AppData\Roaming\uv\python\cpython-3.11-windows-x86_64-none\Lib\concurrent\futures\_base.py", line 401, in __get_result
+    raise self._exception
+  File "C:\Users\luned\AppData\Local\hermes\hermes-agent\venv\Lib\site-packages\hindsight_client\hindsight_client.py", line 765, in aretain_batch
+    return await self._memory_api.retain_memories(bank_id, request_obj, _request_timeout=self._timeout)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\luned\AppData\Local\hermes\hermes-agent\venv\Lib\site-packages\pydantic\_internal\_validate_call.py", line 35, in wrapper_function
+    return await wrapper(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\luned\AppData\Local\hermes\hermes-agent\venv\Lib\site-packages\hindsight_client_api\api\memory_api.py", line 3010, in retain_memories
+    response_data = await self.api_client.call_api(
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\luned\AppData\Local\hermes\hermes-agent\venv\Lib\site-packages\hindsight_client_api\api_client.py", line 276, in call_api
+    response_data = await self.rest_client.request(
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\luned\AppData\Local\hermes\hermes-agent\venv\Lib\site-packages\hindsight_client_api\rest.py", line 233, in request
+    r = await pool_manager.request(**args)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\luned\AppData\Local\hermes\hermes-agent\venv\Lib\site-packages\aiohttp\client.py", line 673, in _request
+    auth = await self._loop.run_in_executor(
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\luned\AppData\Roaming\uv\python\cpython-3.11-windows-x86_64-none\Lib\asyncio\base_events.py", line 830, in run_in_executor
+    executor.submit(func, *args), loop=self)
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\luned\AppData\Roaming\uv\python\cpython-3.11-windows-x86_64-none\Lib\concurrent\futures\thread.py", line 169, in submit
+    raise RuntimeError('cannot schedule new futures after '
+RuntimeError: cannot schedule new futures after interpreter shutdown
+2026-05-30 21:36:09,494 ERROR asyncio: Unclosed client session
+client_session: <aiohttp.client.ClientSession object at 0x0000029E64D8C290>

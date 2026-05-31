@@ -1,0 +1,213 @@
+2026-05-30 04:41:15,074 INFO hermes_cli.plugins: Plugin 'browser-browser-use' registered browser provider: browser-use
+2026-05-30 04:41:15,076 INFO hermes_cli.plugins: Plugin 'browser-browserbase' registered browser provider: browserbase
+2026-05-30 04:41:15,079 INFO hermes_cli.plugins: Plugin 'browser-firecrawl' registered browser provider: firecrawl
+2026-05-30 04:41:15,173 INFO hermes_cli.plugins: Plugin 'fal' registered image_gen provider: fal
+2026-05-30 04:41:15,174 INFO hermes_cli.plugins: Plugin 'krea' registered image_gen provider: krea
+2026-05-30 04:41:15,176 INFO hermes_cli.plugins: Plugin 'openai' registered image_gen provider: openai
+2026-05-30 04:41:15,177 INFO hermes_cli.plugins: Plugin 'openai-codex' registered image_gen provider: openai-codex
+2026-05-30 04:41:15,180 INFO hermes_cli.plugins: Plugin 'xai' registered image_gen provider: xai
+2026-05-30 04:41:15,195 INFO hermes_cli.plugins: Plugin 'fal' registered video_gen provider: fal
+2026-05-30 04:41:15,197 INFO hermes_cli.plugins: Plugin 'xai' registered video_gen provider: xai
+2026-05-30 04:41:15,202 INFO hermes_cli.plugins: Plugin 'web-brave-free' registered web provider: brave-free
+2026-05-30 04:41:15,204 INFO hermes_cli.plugins: Plugin 'web-ddgs' registered web provider: ddgs
+2026-05-30 04:41:15,207 INFO hermes_cli.plugins: Plugin 'web-exa' registered web provider: exa
+2026-05-30 04:41:15,211 INFO hermes_cli.plugins: Plugin 'web-firecrawl' registered web provider: firecrawl
+2026-05-30 04:41:15,214 INFO hermes_cli.plugins: Plugin 'web-parallel' registered web provider: parallel
+2026-05-30 04:41:15,217 INFO hermes_cli.plugins: Plugin 'web-searxng' registered web provider: searxng
+2026-05-30 04:41:15,219 INFO hermes_cli.plugins: Plugin 'web-tavily' registered web provider: tavily
+2026-05-30 04:41:15,222 INFO hermes_cli.plugins: Plugin 'web-xai' registered web provider: xai
+2026-05-30 04:41:15,535 INFO hermes_cli.plugins: Plugin discovery complete: 33 found, 28 enabled
+2026-05-30 04:41:27,962 INFO hermes_cli.plugins: Plugin 'browser-browser-use' registered browser provider: browser-use
+2026-05-30 04:41:27,965 INFO hermes_cli.plugins: Plugin 'browser-browserbase' registered browser provider: browserbase
+2026-05-30 04:41:27,967 INFO hermes_cli.plugins: Plugin 'browser-firecrawl' registered browser provider: firecrawl
+2026-05-30 04:41:28,029 INFO hermes_cli.plugins: Plugin 'fal' registered image_gen provider: fal
+2026-05-30 04:41:28,030 INFO hermes_cli.plugins: Plugin 'krea' registered image_gen provider: krea
+2026-05-30 04:41:28,031 INFO hermes_cli.plugins: Plugin 'openai' registered image_gen provider: openai
+2026-05-30 04:41:28,032 INFO hermes_cli.plugins: Plugin 'openai-codex' registered image_gen provider: openai-codex
+2026-05-30 04:41:28,033 INFO hermes_cli.plugins: Plugin 'xai' registered image_gen provider: xai
+2026-05-30 04:41:28,044 INFO hermes_cli.plugins: Plugin 'fal' registered video_gen provider: fal
+2026-05-30 04:41:28,044 INFO hermes_cli.plugins: Plugin 'xai' registered video_gen provider: xai
+2026-05-30 04:41:28,047 INFO hermes_cli.plugins: Plugin 'web-brave-free' registered web provider: brave-free
+2026-05-30 04:41:28,049 INFO hermes_cli.plugins: Plugin 'web-ddgs' registered web provider: ddgs
+2026-05-30 04:41:28,051 INFO hermes_cli.plugins: Plugin 'web-exa' registered web provider: exa
+2026-05-30 04:41:28,053 INFO hermes_cli.plugins: Plugin 'web-firecrawl' registered web provider: firecrawl
+2026-05-30 04:41:28,055 INFO hermes_cli.plugins: Plugin 'web-parallel' registered web provider: parallel
+2026-05-30 04:41:28,057 INFO hermes_cli.plugins: Plugin 'web-searxng' registered web provider: searxng
+2026-05-30 04:41:28,060 INFO hermes_cli.plugins: Plugin 'web-tavily' registered web provider: tavily
+2026-05-30 04:41:28,062 INFO hermes_cli.plugins: Plugin 'web-xai' registered web provider: xai
+2026-05-30 04:41:28,359 INFO hermes_cli.plugins: Plugin discovery complete: 33 found, 28 enabled
+2026-05-30 04:41:30,292 WARNING agent.auxiliary_client: Auxiliary Nous client unavailable: no Nous authentication found (run: hermes auth).
+2026-05-30 04:41:30,293 WARNING agent.auxiliary_client: Auxiliary: marking nous unhealthy for 60s (payment / credit error). Subsequent auxiliary calls will skip it until 04:42:30.
+2026-05-30 04:41:30,306 WARNING agent.auxiliary_client: Auxiliary Nous client unavailable: no Nous authentication found (run: hermes auth).
+2026-05-30 04:41:30,306 WARNING agent.auxiliary_client: Auxiliary: marking nous unhealthy for 60s (payment / credit error). Subsequent auxiliary calls will skip it until 04:42:30.
+2026-05-30 04:41:30,383 WARNING agent.auxiliary_client: Auxiliary Nous client unavailable: no Nous authentication found (run: hermes auth).
+2026-05-30 04:41:30,383 WARNING agent.auxiliary_client: Auxiliary: marking nous unhealthy for 60s (payment / credit error). Subsequent auxiliary calls will skip it until 04:42:30.
+2026-05-30 04:41:30,397 WARNING agent.auxiliary_client: Auxiliary Nous client unavailable: no Nous authentication found (run: hermes auth).
+2026-05-30 04:41:30,397 WARNING agent.auxiliary_client: Auxiliary: marking nous unhealthy for 60s (payment / credit error). Subsequent auxiliary calls will skip it until 04:42:30.
+2026-05-30 04:41:30,585 WARNING agent.auxiliary_client: Auxiliary Nous client unavailable: no Nous authentication found (run: hermes auth).
+2026-05-30 04:41:30,585 WARNING agent.auxiliary_client: Auxiliary: marking nous unhealthy for 60s (payment / credit error). Subsequent auxiliary calls will skip it until 04:42:30.
+2026-05-30 04:41:30,600 WARNING agent.auxiliary_client: Auxiliary Nous client unavailable: no Nous authentication found (run: hermes auth).
+2026-05-30 04:41:30,601 WARNING agent.auxiliary_client: Auxiliary: marking nous unhealthy for 60s (payment / credit error). Subsequent auxiliary calls will skip it until 04:42:30.
+2026-05-30 04:41:30,615 WARNING agent.auxiliary_client: Auxiliary Nous client unavailable: no Nous authentication found (run: hermes auth).
+2026-05-30 04:41:30,615 WARNING agent.auxiliary_client: Auxiliary: marking nous unhealthy for 60s (payment / credit error). Subsequent auxiliary calls will skip it until 04:42:30.
+2026-05-30 04:41:30,628 WARNING agent.auxiliary_client: Auxiliary Nous client unavailable: no Nous authentication found (run: hermes auth).
+2026-05-30 04:41:30,628 WARNING agent.auxiliary_client: Auxiliary: marking nous unhealthy for 60s (payment / credit error). Subsequent auxiliary calls will skip it until 04:42:30.
+2026-05-30 04:41:31,351 WARNING agent.auxiliary_client: Auxiliary Nous client unavailable: no Nous authentication found (run: hermes auth).
+2026-05-30 04:41:31,351 WARNING agent.auxiliary_client: Auxiliary: marking nous unhealthy for 60s (payment / credit error). Subsequent auxiliary calls will skip it until 04:42:31.
+2026-05-30 04:41:31,365 WARNING agent.auxiliary_client: Auxiliary Nous client unavailable: no Nous authentication found (run: hermes auth).
+2026-05-30 04:41:31,366 WARNING agent.auxiliary_client: Auxiliary: marking nous unhealthy for 60s (payment / credit error). Subsequent auxiliary calls will skip it until 04:42:31.
+2026-05-30 04:41:31,382 WARNING agent.auxiliary_client: Auxiliary Nous client unavailable: no Nous authentication found (run: hermes auth).
+2026-05-30 04:41:31,383 WARNING agent.auxiliary_client: Auxiliary: marking nous unhealthy for 60s (payment / credit error). Subsequent auxiliary calls will skip it until 04:42:31.
+2026-05-30 04:41:31,397 WARNING agent.auxiliary_client: Auxiliary Nous client unavailable: no Nous authentication found (run: hermes auth).
+2026-05-30 04:41:31,398 WARNING agent.auxiliary_client: Auxiliary: marking nous unhealthy for 60s (payment / credit error). Subsequent auxiliary calls will skip it until 04:42:31.
+2026-05-30 04:41:53,574 INFO hermes_cli.plugins: Plugin 'browser-browser-use' registered browser provider: browser-use
+2026-05-30 04:41:53,576 INFO hermes_cli.plugins: Plugin 'browser-browserbase' registered browser provider: browserbase
+2026-05-30 04:41:53,579 INFO hermes_cli.plugins: Plugin 'browser-firecrawl' registered browser provider: firecrawl
+2026-05-30 04:41:53,653 INFO hermes_cli.plugins: Plugin 'fal' registered image_gen provider: fal
+2026-05-30 04:41:53,653 INFO hermes_cli.plugins: Plugin 'krea' registered image_gen provider: krea
+2026-05-30 04:41:53,654 INFO hermes_cli.plugins: Plugin 'openai' registered image_gen provider: openai
+2026-05-30 04:41:53,654 INFO hermes_cli.plugins: Plugin 'openai-codex' registered image_gen provider: openai-codex
+2026-05-30 04:41:53,656 INFO hermes_cli.plugins: Plugin 'xai' registered image_gen provider: xai
+2026-05-30 04:41:53,668 INFO hermes_cli.plugins: Plugin 'fal' registered video_gen provider: fal
+2026-05-30 04:41:53,669 INFO hermes_cli.plugins: Plugin 'xai' registered video_gen provider: xai
+2026-05-30 04:41:53,673 INFO hermes_cli.plugins: Plugin 'web-brave-free' registered web provider: brave-free
+2026-05-30 04:41:53,675 INFO hermes_cli.plugins: Plugin 'web-ddgs' registered web provider: ddgs
+2026-05-30 04:41:53,677 INFO hermes_cli.plugins: Plugin 'web-exa' registered web provider: exa
+2026-05-30 04:41:53,679 INFO hermes_cli.plugins: Plugin 'web-firecrawl' registered web provider: firecrawl
+2026-05-30 04:41:53,681 INFO hermes_cli.plugins: Plugin 'web-parallel' registered web provider: parallel
+2026-05-30 04:41:53,683 INFO hermes_cli.plugins: Plugin 'web-searxng' registered web provider: searxng
+2026-05-30 04:41:53,685 INFO hermes_cli.plugins: Plugin 'web-tavily' registered web provider: tavily
+2026-05-30 04:41:53,687 INFO hermes_cli.plugins: Plugin 'web-xai' registered web provider: xai
+2026-05-30 04:41:53,975 INFO hermes_cli.plugins: Plugin discovery complete: 33 found, 28 enabled
+2026-05-30 05:25:11,612 INFO hermes_cli.plugins: Plugin 'browser-browser-use' registered browser provider: browser-use
+2026-05-30 05:25:11,614 INFO hermes_cli.plugins: Plugin 'browser-browserbase' registered browser provider: browserbase
+2026-05-30 05:25:11,616 INFO hermes_cli.plugins: Plugin 'browser-firecrawl' registered browser provider: firecrawl
+2026-05-30 05:25:11,692 INFO hermes_cli.plugins: Plugin 'fal' registered image_gen provider: fal
+2026-05-30 05:25:11,694 INFO hermes_cli.plugins: Plugin 'krea' registered image_gen provider: krea
+2026-05-30 05:25:11,695 INFO hermes_cli.plugins: Plugin 'openai' registered image_gen provider: openai
+2026-05-30 05:25:11,696 INFO hermes_cli.plugins: Plugin 'openai-codex' registered image_gen provider: openai-codex
+2026-05-30 05:25:11,697 INFO hermes_cli.plugins: Plugin 'xai' registered image_gen provider: xai
+2026-05-30 05:25:11,707 INFO hermes_cli.plugins: Plugin 'fal' registered video_gen provider: fal
+2026-05-30 05:25:11,708 INFO hermes_cli.plugins: Plugin 'xai' registered video_gen provider: xai
+2026-05-30 05:25:11,711 INFO hermes_cli.plugins: Plugin 'web-brave-free' registered web provider: brave-free
+2026-05-30 05:25:11,714 INFO hermes_cli.plugins: Plugin 'web-ddgs' registered web provider: ddgs
+2026-05-30 05:25:11,716 INFO hermes_cli.plugins: Plugin 'web-exa' registered web provider: exa
+2026-05-30 05:25:11,718 INFO hermes_cli.plugins: Plugin 'web-firecrawl' registered web provider: firecrawl
+2026-05-30 05:25:11,720 INFO hermes_cli.plugins: Plugin 'web-parallel' registered web provider: parallel
+2026-05-30 05:25:11,723 INFO hermes_cli.plugins: Plugin 'web-searxng' registered web provider: searxng
+2026-05-30 05:25:11,724 INFO hermes_cli.plugins: Plugin 'web-tavily' registered web provider: tavily
+2026-05-30 05:25:11,727 INFO hermes_cli.plugins: Plugin 'web-xai' registered web provider: xai
+2026-05-30 05:25:11,998 INFO hermes_cli.plugins: Plugin discovery complete: 33 found, 28 enabled
+2026-05-30 05:25:33,608 INFO hermes_cli.plugins: Plugin 'browser-browser-use' registered browser provider: browser-use
+2026-05-30 05:25:33,610 INFO hermes_cli.plugins: Plugin 'browser-browserbase' registered browser provider: browserbase
+2026-05-30 05:25:33,612 INFO hermes_cli.plugins: Plugin 'browser-firecrawl' registered browser provider: firecrawl
+2026-05-30 05:25:33,683 INFO hermes_cli.plugins: Plugin 'fal' registered image_gen provider: fal
+2026-05-30 05:25:33,685 INFO hermes_cli.plugins: Plugin 'krea' registered image_gen provider: krea
+2026-05-30 05:25:33,685 INFO hermes_cli.plugins: Plugin 'openai' registered image_gen provider: openai
+2026-05-30 05:25:33,686 INFO hermes_cli.plugins: Plugin 'openai-codex' registered image_gen provider: openai-codex
+2026-05-30 05:25:33,687 INFO hermes_cli.plugins: Plugin 'xai' registered image_gen provider: xai
+2026-05-30 05:25:33,697 INFO hermes_cli.plugins: Plugin 'fal' registered video_gen provider: fal
+2026-05-30 05:25:33,698 INFO hermes_cli.plugins: Plugin 'xai' registered video_gen provider: xai
+2026-05-30 05:25:33,702 INFO hermes_cli.plugins: Plugin 'web-brave-free' registered web provider: brave-free
+2026-05-30 05:25:33,703 INFO hermes_cli.plugins: Plugin 'web-ddgs' registered web provider: ddgs
+2026-05-30 05:25:33,705 INFO hermes_cli.plugins: Plugin 'web-exa' registered web provider: exa
+2026-05-30 05:25:33,707 INFO hermes_cli.plugins: Plugin 'web-firecrawl' registered web provider: firecrawl
+2026-05-30 05:25:33,709 INFO hermes_cli.plugins: Plugin 'web-parallel' registered web provider: parallel
+2026-05-30 05:25:33,712 INFO hermes_cli.plugins: Plugin 'web-searxng' registered web provider: searxng
+2026-05-30 05:25:33,714 INFO hermes_cli.plugins: Plugin 'web-tavily' registered web provider: tavily
+2026-05-30 05:25:33,715 INFO hermes_cli.plugins: Plugin 'web-xai' registered web provider: xai
+2026-05-30 05:25:33,985 INFO hermes_cli.plugins: Plugin discovery complete: 33 found, 28 enabled
+2026-05-30 05:26:40,503 INFO hermes_cli.plugins: Plugin 'browser-browser-use' registered browser provider: browser-use
+2026-05-30 05:26:40,505 INFO hermes_cli.plugins: Plugin 'browser-browserbase' registered browser provider: browserbase
+2026-05-30 05:26:40,506 INFO hermes_cli.plugins: Plugin 'browser-firecrawl' registered browser provider: firecrawl
+2026-05-30 05:26:40,576 INFO hermes_cli.plugins: Plugin 'fal' registered image_gen provider: fal
+2026-05-30 05:26:40,577 INFO hermes_cli.plugins: Plugin 'krea' registered image_gen provider: krea
+2026-05-30 05:26:40,578 INFO hermes_cli.plugins: Plugin 'openai' registered image_gen provider: openai
+2026-05-30 05:26:40,579 INFO hermes_cli.plugins: Plugin 'openai-codex' registered image_gen provider: openai-codex
+2026-05-30 05:26:40,580 INFO hermes_cli.plugins: Plugin 'xai' registered image_gen provider: xai
+2026-05-30 05:26:40,590 INFO hermes_cli.plugins: Plugin 'fal' registered video_gen provider: fal
+2026-05-30 05:26:40,591 INFO hermes_cli.plugins: Plugin 'xai' registered video_gen provider: xai
+2026-05-30 05:26:40,594 INFO hermes_cli.plugins: Plugin 'web-brave-free' registered web provider: brave-free
+2026-05-30 05:26:40,596 INFO hermes_cli.plugins: Plugin 'web-ddgs' registered web provider: ddgs
+2026-05-30 05:26:40,598 INFO hermes_cli.plugins: Plugin 'web-exa' registered web provider: exa
+2026-05-30 05:26:40,599 INFO hermes_cli.plugins: Plugin 'web-firecrawl' registered web provider: firecrawl
+2026-05-30 05:26:40,602 INFO hermes_cli.plugins: Plugin 'web-parallel' registered web provider: parallel
+2026-05-30 05:26:40,604 INFO hermes_cli.plugins: Plugin 'web-searxng' registered web provider: searxng
+2026-05-30 05:26:40,606 INFO hermes_cli.plugins: Plugin 'web-tavily' registered web provider: tavily
+2026-05-30 05:26:40,608 INFO hermes_cli.plugins: Plugin 'web-xai' registered web provider: xai
+2026-05-30 05:26:40,886 INFO hermes_cli.plugins: Plugin discovery complete: 33 found, 28 enabled
+2026-05-30 05:30:57,311 INFO hermes_cli.plugins: Plugin 'browser-browser-use' registered browser provider: browser-use
+2026-05-30 05:30:57,314 INFO hermes_cli.plugins: Plugin 'browser-browserbase' registered browser provider: browserbase
+2026-05-30 05:30:57,315 INFO hermes_cli.plugins: Plugin 'browser-firecrawl' registered browser provider: firecrawl
+2026-05-30 05:30:57,377 INFO hermes_cli.plugins: Plugin 'fal' registered image_gen provider: fal
+2026-05-30 05:30:57,378 INFO hermes_cli.plugins: Plugin 'krea' registered image_gen provider: krea
+2026-05-30 05:30:57,379 INFO hermes_cli.plugins: Plugin 'openai' registered image_gen provider: openai
+2026-05-30 05:30:57,380 INFO hermes_cli.plugins: Plugin 'openai-codex' registered image_gen provider: openai-codex
+2026-05-30 05:30:57,381 INFO hermes_cli.plugins: Plugin 'xai' registered image_gen provider: xai
+2026-05-30 05:30:57,391 INFO hermes_cli.plugins: Plugin 'fal' registered video_gen provider: fal
+2026-05-30 05:30:57,392 INFO hermes_cli.plugins: Plugin 'xai' registered video_gen provider: xai
+2026-05-30 05:30:57,395 INFO hermes_cli.plugins: Plugin 'web-brave-free' registered web provider: brave-free
+2026-05-30 05:30:57,397 INFO hermes_cli.plugins: Plugin 'web-ddgs' registered web provider: ddgs
+2026-05-30 05:30:57,398 INFO hermes_cli.plugins: Plugin 'web-exa' registered web provider: exa
+2026-05-30 05:30:57,401 INFO hermes_cli.plugins: Plugin 'web-firecrawl' registered web provider: firecrawl
+2026-05-30 05:30:57,402 INFO hermes_cli.plugins: Plugin 'web-parallel' registered web provider: parallel
+2026-05-30 05:30:57,405 INFO hermes_cli.plugins: Plugin 'web-searxng' registered web provider: searxng
+2026-05-30 05:30:57,406 INFO hermes_cli.plugins: Plugin 'web-tavily' registered web provider: tavily
+2026-05-30 05:30:57,408 INFO hermes_cli.plugins: Plugin 'web-xai' registered web provider: xai
+2026-05-30 05:30:57,698 INFO hermes_cli.plugins: Plugin discovery complete: 33 found, 28 enabled
+2026-05-30 05:30:59,254 WARNING agent.auxiliary_client: Auxiliary Nous client unavailable: no Nous authentication found (run: hermes auth).
+2026-05-30 05:30:59,255 WARNING agent.auxiliary_client: Auxiliary: marking nous unhealthy for 60s (payment / credit error). Subsequent auxiliary calls will skip it until 05:31:59.
+2026-05-30 05:30:59,268 WARNING agent.auxiliary_client: Auxiliary Nous client unavailable: no Nous authentication found (run: hermes auth).
+2026-05-30 05:30:59,268 WARNING agent.auxiliary_client: Auxiliary: marking nous unhealthy for 60s (payment / credit error). Subsequent auxiliary calls will skip it until 05:31:59.
+2026-05-30 05:30:59,356 WARNING agent.auxiliary_client: Auxiliary Nous client unavailable: no Nous authentication found (run: hermes auth).
+2026-05-30 05:30:59,356 WARNING agent.auxiliary_client: Auxiliary: marking nous unhealthy for 60s (payment / credit error). Subsequent auxiliary calls will skip it until 05:31:59.
+2026-05-30 05:30:59,371 WARNING agent.auxiliary_client: Auxiliary Nous client unavailable: no Nous authentication found (run: hermes auth).
+2026-05-30 05:30:59,371 WARNING agent.auxiliary_client: Auxiliary: marking nous unhealthy for 60s (payment / credit error). Subsequent auxiliary calls will skip it until 05:31:59.
+2026-05-30 05:30:59,604 WARNING agent.auxiliary_client: Auxiliary Nous client unavailable: no Nous authentication found (run: hermes auth).
+2026-05-30 05:30:59,604 WARNING agent.auxiliary_client: Auxiliary: marking nous unhealthy for 60s (payment / credit error). Subsequent auxiliary calls will skip it until 05:31:59.
+2026-05-30 05:30:59,617 WARNING agent.auxiliary_client: Auxiliary Nous client unavailable: no Nous authentication found (run: hermes auth).
+2026-05-30 05:30:59,618 WARNING agent.auxiliary_client: Auxiliary: marking nous unhealthy for 60s (payment / credit error). Subsequent auxiliary calls will skip it until 05:31:59.
+2026-05-30 05:30:59,630 WARNING agent.auxiliary_client: Auxiliary Nous client unavailable: no Nous authentication found (run: hermes auth).
+2026-05-30 05:30:59,631 WARNING agent.auxiliary_client: Auxiliary: marking nous unhealthy for 60s (payment / credit error). Subsequent auxiliary calls will skip it until 05:31:59.
+2026-05-30 05:30:59,648 WARNING agent.auxiliary_client: Auxiliary Nous client unavailable: no Nous authentication found (run: hermes auth).
+2026-05-30 05:30:59,649 WARNING agent.auxiliary_client: Auxiliary: marking nous unhealthy for 60s (payment / credit error). Subsequent auxiliary calls will skip it until 05:31:59.
+2026-05-30 05:30:59,962 WARNING agent.auxiliary_client: Auxiliary Nous client unavailable: no Nous authentication found (run: hermes auth).
+2026-05-30 05:30:59,962 WARNING agent.auxiliary_client: Auxiliary: marking nous unhealthy for 60s (payment / credit error). Subsequent auxiliary calls will skip it until 05:31:59.
+2026-05-30 05:30:59,975 WARNING agent.auxiliary_client: Auxiliary Nous client unavailable: no Nous authentication found (run: hermes auth).
+2026-05-30 05:30:59,976 WARNING agent.auxiliary_client: Auxiliary: marking nous unhealthy for 60s (payment / credit error). Subsequent auxiliary calls will skip it until 05:31:59.
+2026-05-30 05:30:59,990 WARNING agent.auxiliary_client: Auxiliary Nous client unavailable: no Nous authentication found (run: hermes auth).
+2026-05-30 05:30:59,990 WARNING agent.auxiliary_client: Auxiliary: marking nous unhealthy for 60s (payment / credit error). Subsequent auxiliary calls will skip it until 05:31:59.
+2026-05-30 05:31:00,004 WARNING agent.auxiliary_client: Auxiliary Nous client unavailable: no Nous authentication found (run: hermes auth).
+2026-05-30 05:31:00,004 WARNING agent.auxiliary_client: Auxiliary: marking nous unhealthy for 60s (payment / credit error). Subsequent auxiliary calls will skip it until 05:32:00.
+2026-05-30 05:31:05,006 INFO run_agent: Loaded environment variables from C:\Users\luned\AppData\Local\hermes\profiles\agy-lane\.env
+2026-05-30 05:31:05,645 INFO run_agent: OpenAI client created (agent_init, shared=True) thread=Thread-11 (process_loop):51592 provider=openrouter base_url=https://openrouter.ai/api/v1 model=openrouter/owl-alpha
+2026-05-30 05:31:05,669 INFO agent.memory_manager: Memory provider 'hindsight' registered (3 tools)
+2026-05-30 05:31:05,672 INFO plugins.memory.hindsight: Hindsight initialized: mode=local_external, api_url=http://localhost:8888, bank=agy-lane, budget=mid, memory_mode=hybrid, prefetch_method=recall, client=0.6.1
+2026-05-30 05:31:05,672 INFO run_agent: Memory provider 'hindsight' activated
+2026-05-30 05:31:05,777 INFO [20260530_053058_bda9e2] agent.conversation_loop: conversation turn: session=20260530_053058_bda9e2 model=openrouter/owl-alpha provider=openrouter platform=cli history=0 msg='just want to test something'
+2026-05-30 05:31:06,366 INFO run_agent: OpenAI client created (chat_completion_stream_request, shared=False) thread=Thread-19 (_call):35648 provider=openrouter base_url=https://openrouter.ai/api/v1 model=openrouter/owl-alpha
+2026-05-30 05:31:13,069 INFO run_agent: OpenAI client closed (stream_request_complete, shared=False, tcp_force_closed=0) thread=Thread-19 (_call):35648 provider=openrouter base_url=https://openrouter.ai/api/v1 model=openrouter/owl-alpha
+2026-05-30 05:31:13,070 INFO [20260530_053058_bda9e2] agent.conversation_loop: API call #1: model=openrouter/owl-alpha provider=openrouter in=17052 out=14 total=17066 latency=6.7s cache=2304/17052 (14%)
+2026-05-30 05:31:13,074 INFO [20260530_053058_bda9e2] agent.conversation_loop: Turn ended: reason=text_response(finish_reason=stop) model=openrouter/owl-alpha api_calls=1/150 budget=1/150 tool_turns=0 last_msg_role=assistant response_len=45 session=20260530_053058_bda9e2
+2026-05-30 05:31:15,783 INFO agent.auxiliary_client: Auxiliary auto-detect: using main provider openrouter (openrouter/owl-alpha)
+2026-05-30 05:31:15,783 INFO agent.auxiliary_client: Auxiliary title_generation: using auto (openrouter/owl-alpha)
+2026-05-30 05:31:16,445 ERROR asyncio: Unclosed client session
+client_session: <aiohttp.client.ClientSession object at 0x0000021E7C2B6C10>
+2026-05-30 05:31:16,445 ERROR asyncio: Unclosed connector
+connections: ['deque([(<aiohttp.client_proto.ResponseHandler object at 0x0000021E7C1A2D60>, 226372.453)])']
+connector: <aiohttp.connector.TCPConnector object at 0x0000021E7C2B6D10>
+2026-05-30 05:31:21,091 INFO [20260530_053058_bda9e2] agent.conversation_loop: conversation turn: session=20260530_053058_bda9e2 model=openrouter/owl-alpha provider=openrouter platform=cli history=2 msg='what do you know about me'
+2026-05-30 05:31:21,118 INFO run_agent: OpenAI client created (chat_completion_stream_request, shared=False) thread=Thread-21 (_call):53244 provider=openrouter base_url=https://openrouter.ai/api/v1 model=openrouter/owl-alpha
+2026-05-30 05:31:33,567 INFO run_agent: OpenAI client closed (stream_request_complete, shared=False, tcp_force_closed=0) thread=Thread-21 (_call):53244 provider=openrouter base_url=https://openrouter.ai/api/v1 model=openrouter/owl-alpha
+2026-05-30 05:31:33,568 INFO [20260530_053058_bda9e2] agent.conversation_loop: API call #2: model=openrouter/owl-alpha provider=openrouter in=17074 out=125 total=17199 latency=12.5s cache=2304/17074 (13%)
+2026-05-30 05:31:33,580 INFO [20260530_053058_bda9e2] agent.conversation_loop: Turn ended: reason=text_response(finish_reason=stop) model=openrouter/owl-alpha api_calls=1/150 budget=1/150 tool_turns=0 last_msg_role=assistant response_len=452 session=20260530_053058_bda9e2
+2026-05-30 05:31:54,439 INFO [20260530_053058_bda9e2] agent.conversation_loop: conversation turn: session=20260530_053058_bda9e2 model=openrouter/owl-alpha provider=openrouter platform=cli history=4 msg='what can you tell me about your environment and tools'
+2026-05-30 05:31:54,467 INFO run_agent: OpenAI client created (chat_completion_stream_request, shared=False) thread=Thread-23 (_call):21516 provider=openrouter base_url=https://openrouter.ai/api/v1 model=openrouter/owl-alpha
+2026-05-30 05:32:17,623 INFO run_agent: OpenAI client closed (stream_request_complete, shared=False, tcp_force_closed=0) thread=Thread-23 (_call):21516 provider=openrouter base_url=https://openrouter.ai/api/v1 model=openrouter/owl-alpha
+2026-05-30 05:32:17,624 INFO [20260530_053058_bda9e2] agent.conversation_loop: API call #3: model=openrouter/owl-alpha provider=openrouter in=17377 out=387 total=17764 latency=23.2s cache=17024/17377 (98%)
+2026-05-30 05:32:17,627 INFO [20260530_053058_bda9e2] agent.conversation_loop: Turn ended: reason=text_response(finish_reason=stop) model=openrouter/owl-alpha api_calls=1/150 budget=1/150 tool_turns=0 last_msg_role=assistant response_len=1422 session=20260530_053058_bda9e2
+2026-05-30 05:32:29,406 INFO [20260530_053058_bda9e2] agent.conversation_loop: conversation turn: session=20260530_053058_bda9e2 model=openrouter/owl-alpha provider=openrouter platform=cli history=6 msg='what hindsight bank are you defaulted to'
+2026-05-30 05:32:29,431 INFO run_agent: OpenAI client created (chat_completion_stream_request, shared=False) thread=Thread-25 (_call):31748 provider=openrouter base_url=https://openrouter.ai/api/v1 model=openrouter/owl-alpha
+2026-05-30 05:32:42,722 INFO run_agent: OpenAI client closed (stream_request_complete, shared=False, tcp_force_closed=0) thread=Thread-25 (_call):31748 provider=openrouter base_url=https://openrouter.ai/api/v1 model=openrouter/owl-alpha
+2026-05-30 05:32:42,723 INFO [20260530_053058_bda9e2] agent.conversation_loop: API call #4: model=openrouter/owl-alpha provider=openrouter in=17962 out=80 total=18042 latency=13.3s cache=17152/17962 (95%)
+2026-05-30 05:32:42,725 INFO [20260530_053058_bda9e2] agent.conversation_loop: Turn ended: reason=text_response(finish_reason=stop) model=openrouter/owl-alpha api_calls=1/150 budget=1/150 tool_turns=0 last_msg_role=assistant response_len=337 session=20260530_053058_bda9e2

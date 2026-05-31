@@ -1,0 +1,4 @@
+name: session-end-logger
+description: Log session end events for monitoring
+events:
+  - session:end

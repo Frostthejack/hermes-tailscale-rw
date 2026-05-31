@@ -1,0 +1,5 @@
+On this Windows host (luned), Hermes logs are at ~/AppData/Local/hermes/logs/ (e.g., gateway.log, errors.log), NOT at ~/.hermes/logs/ which read_file cannot find. The ~ expansion in read_file resolves differently than in terminal bash. systemctl is not available; use `hermes gateway status` (Scheduled Task-based) to check gateway health.
+§
+Project Hermes-Trading at C:\Users\luned\Documents\Projects\Hermes-Trading. Task t_a6d5e536: building options flow and analyst rating ingestion pipeline.
+§
+Hermes-Trading weekly_report.py: rewrote from scratch with all 8 sections (period summary, trade stats, risk metrics, open positions w/ unrealized P&L, best/worst trades, SPY benchmark comparison, watchlist+events, strategy calibration notes). Also writes to performance_snapshots DB table. Verified all 3 V&E criteria pass. Commit 77caf48 on branch kanban/t_a6d5e536.

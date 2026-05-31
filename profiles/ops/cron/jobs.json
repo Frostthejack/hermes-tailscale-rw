@@ -1,0 +1,285 @@
+{
+  "jobs": [
+    {
+      "id": "ef448462ddfe",
+      "name": "Trading Premarket Scan",
+      "prompt": "Run the daily premarket market scan for the Hermes-Trading project.\n\nSteps:\n1. cd to C:\\Users\\luned\\Documents\\Projects\\Hermes-Trading\n2. Run: python scripts/market_scan.py\n3. Output the results (market snapshot, signals, journal entry summary)\n4. If the script fails, report the error and exit with code 1\n\nReport: market summary, any signals detected, and journal entries created.",
+      "skills": [],
+      "skill": null,
+      "model": null,
+      "provider": null,
+      "base_url": null,
+      "script": null,
+      "no_agent": false,
+      "context_from": null,
+      "schedule": {
+        "kind": "cron",
+        "expr": "0 7 * * 1-5",
+        "display": "0 7 * * 1-5"
+      },
+      "schedule_display": "0 7 * * 1-5",
+      "repeat": {
+        "times": null,
+        "completed": 0
+      },
+      "enabled": true,
+      "state": "scheduled",
+      "paused_at": null,
+      "paused_reason": null,
+      "created_at": "2026-05-30T07:12:55.687451-05:00",
+      "next_run_at": "2026-05-30T07:14:17.554596-05:00",
+      "last_run_at": null,
+      "last_status": null,
+      "last_error": null,
+      "last_delivery_error": null,
+      "deliver": "origin",
+      "origin": null,
+      "enabled_toolsets": [
+        "terminal"
+      ],
+      "workdir": null,
+      "profile": null
+    },
+    {
+      "id": "e7d962aa4a7c",
+      "name": "Trading Intraday Scan",
+      "prompt": "Run the intraday signal scan for the Hermes-Trading project.\n\nSteps:\n1. cd to C:\\Users\\luned\\Documents\\Projects\\Hermes-Trading\n2. Run: python scripts/intraday_scan.py\n3. Output the results (signals detected, any trades triggered)\n4. If the script fails, report the error and exit with code 1\n\nReport: any signals detected, trades triggered, and current exposure.",
+      "skills": [],
+      "skill": null,
+      "model": null,
+      "provider": null,
+      "base_url": null,
+      "script": null,
+      "no_agent": false,
+      "context_from": null,
+      "schedule": {
+        "kind": "cron",
+        "expr": "*/30 9-15 * * 1-5",
+        "display": "*/30 9-15 * * 1-5"
+      },
+      "schedule_display": "*/30 9-15 * * 1-5",
+      "repeat": {
+        "times": null,
+        "completed": 0
+      },
+      "enabled": true,
+      "state": "scheduled",
+      "paused_at": null,
+      "paused_reason": null,
+      "created_at": "2026-05-30T07:12:56.692268-05:00",
+      "next_run_at": "2026-06-01T09:00:00-05:00",
+      "last_run_at": null,
+      "last_status": null,
+      "last_error": null,
+      "last_delivery_error": null,
+      "deliver": "origin",
+      "origin": null,
+      "enabled_toolsets": [
+        "terminal"
+      ],
+      "workdir": null,
+      "profile": null
+    },
+    {
+      "id": "7d7dfcaedad7",
+      "name": "Trading Daily Recap",
+      "prompt": "Generate the daily trading recap for the Hermes-Trading project.\n\nSteps:\n1. cd to C:\\Users\\luned\\Documents\\Projects\\Hermes-Trading\n2. Query the trading database at C:\\Users\\luned\\AppData\\Local\\hermes\\profiles\\trading\\data\\trading.db for today's trades and P&L\n3. Summarize: total trades, winners/losers, net P&L, open positions, notable events\n4. If no trades today, report \"No trades executed today\" with current portfolio status\n\nReport: daily P&L summary, trade list, and portfolio status.",
+      "skills": [],
+      "skill": null,
+      "model": null,
+      "provider": null,
+      "base_url": null,
+      "script": null,
+      "no_agent": false,
+      "context_from": null,
+      "schedule": {
+        "kind": "cron",
+        "expr": "5 16 * * 1-5",
+        "display": "5 16 * * 1-5"
+      },
+      "schedule_display": "5 16 * * 1-5",
+      "repeat": {
+        "times": null,
+        "completed": 0
+      },
+      "enabled": true,
+      "state": "scheduled",
+      "paused_at": null,
+      "paused_reason": null,
+      "created_at": "2026-05-30T07:12:58.719667-05:00",
+      "next_run_at": "2026-06-01T16:05:00-05:00",
+      "last_run_at": null,
+      "last_status": null,
+      "last_error": null,
+      "last_delivery_error": null,
+      "deliver": "origin",
+      "origin": null,
+      "enabled_toolsets": [
+        "terminal"
+      ],
+      "workdir": null,
+      "profile": null
+    },
+    {
+      "id": "de3569c36979",
+      "name": "Trading Weekly Review",
+      "prompt": "Run the weekly performance report for the Hermes-Trading project.\n\nSteps:\n1. cd to C:\\Users\\luned\\Documents\\Projects\\Hermes-Trading\n2. Run: python scripts/weekly_report.py\n3. Output the full report (performance stats, trade summary, open positions)\n4. If the script fails, report the error and exit with code 1\n\nReport: weekly performance summary, P&L, Sharpe ratio, max drawdown, open positions.",
+      "skills": [],
+      "skill": null,
+      "model": null,
+      "provider": null,
+      "base_url": null,
+      "script": null,
+      "no_agent": false,
+      "context_from": null,
+      "schedule": {
+        "kind": "cron",
+        "expr": "0 10 * * 6",
+        "display": "0 10 * * 6"
+      },
+      "schedule_display": "0 10 * * 6",
+      "repeat": {
+        "times": null,
+        "completed": 0
+      },
+      "enabled": true,
+      "state": "scheduled",
+      "paused_at": null,
+      "paused_reason": null,
+      "created_at": "2026-05-30T07:12:59.742965-05:00",
+      "next_run_at": "2026-05-30T10:00:00-05:00",
+      "last_run_at": null,
+      "last_status": null,
+      "last_error": null,
+      "last_delivery_error": null,
+      "deliver": "origin",
+      "origin": null,
+      "enabled_toolsets": [
+        "terminal"
+      ],
+      "workdir": null,
+      "profile": null
+    },
+    {
+      "id": "54115caf675b",
+      "name": "Trading Kanban Watcher",
+      "prompt": "Check the Hermes-Trading kanban board status and report any changes or issues.\n\nSteps:\n1. Run: hermes kanban list --board hermes-trading\n2. Check for: tasks stuck in running > 1 hour, blocked tasks needing attention, new ready tasks\n3. Report: summary of board state, any stuck/blocked tasks, recent completions\n4. If everything is healthy, report \"Board healthy \u2014 no action needed\"\n\nKeep the report concise. Only flag issues that need human attention.",
+      "skills": [],
+      "skill": null,
+      "model": null,
+      "provider": null,
+      "base_url": null,
+      "script": null,
+      "no_agent": false,
+      "context_from": null,
+      "schedule": {
+        "kind": "interval",
+        "minutes": 5,
+        "display": "every 5m"
+      },
+      "schedule_display": "every 5m",
+      "repeat": {
+        "times": null,
+        "completed": 0
+      },
+      "enabled": true,
+      "state": "scheduled",
+      "paused_at": null,
+      "paused_reason": null,
+      "created_at": "2026-05-30T07:13:00.759978-05:00",
+      "next_run_at": "2026-05-30T07:18:00.759978-05:00",
+      "last_run_at": null,
+      "last_status": null,
+      "last_error": null,
+      "last_delivery_error": null,
+      "deliver": "origin",
+      "origin": null,
+      "enabled_toolsets": [
+        "terminal"
+      ],
+      "workdir": null,
+      "profile": null
+    },
+    {
+      "id": "6b0114817560",
+      "name": "Trading Active Board Watcher",
+      "prompt": "Check the Hermes-Trading active kanban board health and fix any issues.\n\nSteps:\n1. Run: hermes kanban list --board hermes-trading\n2. Check for: crashed tasks (stale running), blocked tasks with resolved dependencies, tasks stuck > 2 hours\n3. For any stuck/blocked tasks, add a kanban comment explaining the issue\n4. Report: board health summary, any issues found and actions taken\n5. If everything is healthy, report \"Board healthy \u2014 no issues detected\"\n\nKeep the report concise. Focus on actionable issues.",
+      "skills": [],
+      "skill": null,
+      "model": null,
+      "provider": null,
+      "base_url": null,
+      "script": null,
+      "no_agent": false,
+      "context_from": null,
+      "schedule": {
+        "kind": "interval",
+        "minutes": 300,
+        "display": "every 300m"
+      },
+      "schedule_display": "every 300m",
+      "repeat": {
+        "times": null,
+        "completed": 0
+      },
+      "enabled": true,
+      "state": "scheduled",
+      "paused_at": null,
+      "paused_reason": null,
+      "created_at": "2026-05-30T07:13:01.785929-05:00",
+      "next_run_at": "2026-05-30T12:13:01.785929-05:00",
+      "last_run_at": null,
+      "last_status": null,
+      "last_error": null,
+      "last_delivery_error": null,
+      "deliver": "origin",
+      "origin": null,
+      "enabled_toolsets": [
+        "terminal"
+      ],
+      "workdir": null,
+      "profile": null
+    },
+    {
+      "id": "217a64e21ee2",
+      "name": "Trading Market Watchdog",
+      "prompt": "Run the trading system health check. This is a no-agent watchdog \u2014 just execute the script and report output.",
+      "skills": [],
+      "skill": null,
+      "model": null,
+      "provider": null,
+      "base_url": null,
+      "script": "watchdog_health_check.py",
+      "no_agent": true,
+      "context_from": null,
+      "schedule": {
+        "kind": "cron",
+        "expr": "*/30 9-16 * * 1-5",
+        "display": "*/30 9-16 * * 1-5"
+      },
+      "schedule_display": "*/30 9-16 * * 1-5",
+      "repeat": {
+        "times": null,
+        "completed": 0
+      },
+      "enabled": true,
+      "state": "scheduled",
+      "paused_at": null,
+      "paused_reason": null,
+      "created_at": "2026-05-30T07:13:59.854603-05:00",
+      "next_run_at": "2026-06-01T09:00:00-05:00",
+      "last_run_at": null,
+      "last_status": null,
+      "last_error": null,
+      "last_delivery_error": null,
+      "deliver": "origin",
+      "origin": null,
+      "enabled_toolsets": [
+        "terminal"
+      ],
+      "workdir": null,
+      "profile": null
+    }
+  ],
+  "updated_at": "2026-05-30T07:14:17.555606-05:00"
+}

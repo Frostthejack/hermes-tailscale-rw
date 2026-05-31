@@ -1,0 +1,135 @@
+# Wiki Auto-Fetch Sources Configuration
+# ======================================
+# Two categories:
+#   domain  → synthesized into wiki pages
+#   news    → included in daily briefing only (NOT wiki pages)
+#
+# For each source, specify:
+#   name:     Human-readable identifier
+#   type:     rss | github | arxiv | http_json
+#   url:      Feed URL or API endpoint
+#   cadence:  Polling interval in minutes
+#   scope:    domain | news
+#   section:  For news only: world | national | state | local
+#
+# IMPORTANT: Verify every RSS URL works before adding.
+# See watchers skill for verification commands.
+# Common failures: 401/403 (paywalled), 404 (dead URL), timeout (blocks bots).
+
+sources:
+
+  # ── Domain: AI/Agent Research ──────────────────────────────────────
+
+  - name: arxiv-agent-orchestration
+    type: arxiv
+    query: "cat:cs.AI AND (abs:agent OR abs:orchestration OR abs:multi-agent)"
+    cadence: 120
+    scope: domain
+    max_results: 10
+
+  - name: arxiv-memory-systems
+    type: arxiv
+    query: "cat:cs.AI AND (abs:memory OR abs:retrieval OR abs:context AND abs:agent)"
+    cadence: 120
+    scope: domain
+    max_results: 10
+
+  - name: arxiv-mcp-tooling
+    type: arxiv
+    query: "cat:cs.AI AND (abs:tool-use OR abs:function-calling OR abs:MCP)"
+    cadence: 180
+    scope: domain
+    max_results: 5
+
+  - name: hermes-agent-releases
+    type: github
+    repo: NousResearch/hermes-agent
+    scope_field: releases  # github scope field, not wiki scope
+    cadence: 120
+    wiki_scope: domain
+
+  - name: hindsight-releases
+    type: github
+    repo: NousResearch/hindsight
+    scope_field: releases
+    cadence: 1440
+    wiki_scope: domain
+
+  - name: anthropic-engineering
+    type: rss
+    url: "https://www.anthropic.com/engineering/building-effective-agents"
+    cadence: 60
+    scope: domain
+
+  - name: google-ai-blog
+    type: rss
+    url: "https://blog.google/technology/ai/rss/"
+    cadence: 60
+    scope: domain
+
+  # ── News: World ────────────────────────────────────────────────────
+
+  - name: bbc-world
+    type: rss
+    url: "https://feeds.bbci.co.uk/news/world/rss.xml"
+    cadence: 60
+    scope: news
+    section: world
+
+  - name: npr-news
+    type: rss
+    url: "https://feeds.npr.org/1001/rss.xml"
+    cadence: 60
+    scope: news
+    section: world
+
+  - name: google-news-world
+    type: rss
+    url: "https://news.google.com/rss?hl=en-US&gl=US&ceid=US:en&topic=w"
+    cadence: 60
+    scope: news
+    section: world
+
+  # ── News: National (US) ────────────────────────────────────────────
+
+  - name: google-news-us
+    type: rss
+    url: "https://news.google.com/rss?hl=en-US&gl=US&ceid=US:en"
+    cadence: 60
+    scope: news
+    section: national
+
+  # ── News: State (configure for your state) ────────────────────────
+
+  - name: google-news-missouri
+    type: rss
+    url: "https://news.google.com/rss/search?q=Missouri&hl=en-US&gl=US&ceid=US:en"
+    cadence: 120
+    scope: news
+    section: state
+
+  # ── News: Local (configure for your city/region) ──────────────────
+  # For small towns, use Google News search proxy.
+  # Format: https://news.google.com/rss/search?q=City+State&hl=en-US&gl=US&ceid=US:en
+  # If the town is too small for meaningful results, broaden to nearest city or county.
+
+  - name: google-news-local
+    type: rss
+    url: "https://news.google.com/rss/search?q=Marshall+Missouri+OR+Saline+County+Missouri&hl=en-US&gl=US&ceid=US:en"
+    cadence: 120
+    scope: news
+    section: local
+
+  - name: mid-missouri-abc17
+    type: rss
+    url: "https://abc17news.com/feed/"
+    cadence: 120
+    scope: news
+    section: local
+
+  - name: missouri-independent
+    type: rss
+    url: "https://missouriindependent.com/feed/"
+    cadence: 240
+    scope: news
+    section: state

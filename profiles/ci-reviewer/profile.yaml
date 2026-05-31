@@ -1,0 +1,4 @@
+description: "Reviews pull requests and inspects codebases \u2014 runs tests, flags\
+  \ bugs, suggests fixes, and opens GitHub PRs. Also orchestrates kanban tasks, debugs\
+  \ Python/Node, and manages repos end-to-end."
+description_auto: true

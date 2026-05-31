@@ -1,0 +1,30 @@
+{
+  "mode": "local_external",
+  "apiKey": "",
+  "timeout": 120,
+  "idle_timeout": 300,
+  "retain_tags": "",
+  "retain_source": "",
+  "retain_user_prefix": "User",
+  "retain_assistant_prefix": "Assistant",
+  "api_url": "http://localhost:8888",
+  "recall_budget": "mid",
+  "auto_retain": true,
+  "retain_every_n_turns": 1,
+  "auto_recall": true,
+  "retain_async": true,
+  "recall_types": [
+    "observation",
+    "world",
+    "experience"
+  ],
+  "recall_max_tokens": 2048,
+  "bank_id": "agy-lane",
+  "banks": {
+    "agy-lane": {
+      "bankId": "agy-lane",
+      "budget": "mid",
+      "enabled": true
+    }
+  }
+}
