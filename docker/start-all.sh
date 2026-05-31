@@ -122,6 +122,23 @@ else
     log "Dashboard may have failed — check $LOG_DIR/dashboard.log"
 fi
 
+# ── 7. Health check server (responds 200 /health) ────────────────────
+log "[7/7] Starting health check endpoint..."
+python3 -c "
+import http.server, threading, socketserver
+class H(http.server.BaseHTTPRequestHandler):
+    def do_GET(self):
+        self.send_response(200)
+        self.send_header('Content-Type', 'text/plain')
+        self.end_headers()
+        self.wfile.write(b'ok')
+    def log_message(self, format, *args): pass
+with socketserver.TCPServer(('0.0.0.0', 8080), H) as h:
+    h.serve_forever()
+" > "$LOG_DIR/health.log" 2>&1 &
+HEALTH_PID=$!
+log "Health check on port 8080"
+
 # ── Summary ─────────────────────────────────────────────────────────────
 echo ""
 log "Hermes Agent is LIVE"
