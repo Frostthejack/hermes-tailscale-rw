@@ -3,11 +3,8 @@ FROM python:3.11-slim
 # Install system dependencies including Tailscale
 RUN apt-get update && apt-get install -y \
     curl \
-    gnupg \
-    apt-transport-https \
     ca-certificates \
-    && curl -fsSL https://tailscale.com/install/debian/tailscale.gpg | gpg --dearmor | tee /usr/share/keyrings/tailscale-archive-keyring.gpg >/dev/null \
-    && echo "deb [signed-by=/usr/share/keyrings/tailscale-archive-keyring.gpg] https://pkgs.tailscale.com/debian trixie main" | tee /etc/apt/sources.list.d/tailscale.list \
+    && echo "deb https://pkgs.tailscale.com/debian unstable main" | tee /etc/apt/sources.list.d/tailscale.list \
     && apt-get update \
     && apt-get install -y tailscale \
     && rm -rf /var/lib/apt/lists/*
