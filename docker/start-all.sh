@@ -67,10 +67,15 @@ fi
 
 HOSTNAME="${TS_HOSTNAME:-hermes-$(openssl rand -hex 4)}"
 tailscale up --authkey="$TS_AUTHKEY" --hostname="$HOSTNAME" --accept-routes 2>&1 | tail -3 | while read l; do log "  $l"; done
-sleep 5
+sleep 3
+
+# Enable Tailnet SSH (Tailscale's built-in SSH server)
+log "Enabling Tailnet SSH..."
+tailscale set --ssh 2>&1 | tail -3 | while read l; do log "  $l"; done
+sleep 2
 
 TAILSCALE_IP=$(tailscale ip -4 2>/dev/null || echo "pending")
-log "Tailscale connected (hostname=$HOSTNAME ip=$TAILSCALE_IP)"
+log "Tailscale connected (hostname=$HOSTNAME ip=$TAILSCALE_IP, ssh=enabled)"
 
 # ── 4. SSHD ──────────────────────────────────────────────────────────────
 log "[4/6] Starting SSH daemon..."
