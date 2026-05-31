@@ -6,6 +6,84 @@ log() { echo "[$(date -u +%H:%M:%S)] $*"; }
 
 log "Hermes Agent starting..."
 
+# ── Generate config from environment variables ───────────
+log "Setting up Hermes config..."
+
+# Ensure .env exists (Railway injects env vars, but hermes also reads .env)
+if [ ! -f /root/.hermes/.env ]; then
+    log "Creating .env from environment..."
+    {
+        [ -n "${OPENROUTER_API_KEY:-}" ] && echo "OPENROUTER_API_KEY=${OPENROUTER_API_KEY}"
+        [ -n "${DATABASE_URL:-}" ] && echo "DATABASE_URL=${DATABASE_URL}"
+        [ -n "${API_SERVER_KEY:-}" ] && echo "API_SERVER_KEY=${API_SERVER_KEY}"
+        echo "API_SERVER_ENABLED=true"
+        echo "API_SERVER_PORT=8642"
+        echo "HINDSIGHT_MODE=local_embedded"
+        echo "HINDSIGHT_BANK_ID=${HINDSIGHT_BANK_ID:-hermes-railway}"
+    } > /root/.hermes/.env
+    log "Created .env"
+else
+    log ".env already exists"
+fi
+
+# Ensure config.yaml exists
+if [ ! -f /root/.hermes/config.yaml ]; then
+    log "Creating config.yaml..."
+    cat > /root/.hermes/config.yaml << 'YAMLEOF'
+model:
+  provider: openrouter
+  default: "@preset/hermes"
+  api_mode: chat_completions
+  context_length: 131072
+
+agent:
+  max_turns: 90
+
+terminal:
+  backend: local
+  cwd: /root
+  timeout: 180
+
+compression:
+  enabled: true
+  threshold: 0.50
+  target_ratio: 0.20
+
+display:
+  personality: default
+  reasoning: off
+  bell: false
+
+memory:
+  memory_enabled: true
+  user_profile_enabled: true
+  provider: hindsight
+
+plugins:
+  enabled:
+    - hindsight
+
+security:
+  tirith_enabled: false
+
+delegation:
+  max_iterations: 50
+
+checkpoints:
+  enabled: true
+  max_snapshots: 50
+
+stt:
+  enabled: false
+
+tts:
+  provider: edge
+YAMLEOF
+    log "Created config.yaml"
+else
+    log "config.yaml already exists"
+fi
+
 # ── Tailscale ────────────────────────────────────────────
 log "Starting Tailscale..."
 tailscaled --tun=userspace-networking --state=/hermes-data/tailscale.state &
@@ -56,13 +134,7 @@ log "Gateway restart loop started"
 
 # Give gateway a moment to start
 sleep 5
-
-# Verify it's running
-if kill -0 $GW_LOOP_PID 2>/dev/null; then
-    log "Gateway loop running"
-else
-    log "WARNING: Gateway loop failed to start"
-fi
+log "Gateway should be running"
 
 # ── Dashboard ────────────────────────────────────────────
 log "Starting Dashboard..."
@@ -80,8 +152,7 @@ socketserver.TCPServer(('0.0.0.0',8080),H).serve_forever()
 
 log "LIVE — Tailscale: $TS_IP"
 
-# — Wait for all critical processes —
-# If any critical process dies, the script exits and container restarts
+# — Wait for critical processes —
 wait $GW_LOOP_PID $TAILSCALED_PID
 log "Critical process exited, container will restart..."
 sleep 2
