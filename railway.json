@@ -4,7 +4,9 @@
     "builder": "dockerfile"
   },
   "deploy": {
-    "startCommand": "/start-all.sh",
+    "startCommand": "/railway-start.sh",
+    "healthcheckPath": "/",
+    "healthcheckTimeout": 120,
     "restartPolicyType": "on_failure",
     "restartPolicyMaxRetries": 10
   }
