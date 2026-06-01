@@ -74,46 +74,72 @@ else
     git -C "$WIKI_PATH" pull --rebase 2>&1 | tail -3 || true
 fi
 
-# ── 3. Config generation (Python — safe secret handling) ────
+# ── 3. Health check FIRST (Railway needs this to pass) ──────────
+export PATH="/hermes-venv/bin:${PATH:-}"
+log "Starting health check on port ${PORT:-8080}..."
+python3 /app/health.py > "$LOG/health.log" 2>&1 &
+HEALTH_PID=$!
+sleep 2
+log "Health check started"
+
+# ── 4. Config generation (Python — safe secret handling) ────
 python3 /app/generate_config.py
 
-# ── 4. Tailscale (userspace networking) ─────────────────────
+# ── 5. Tailscale (userspace networking, best-effort) ───────
 log "Starting Tailscale..."
 tailscaled --tun=userspace-networking --state=/hermes-data/tailscale.state &
-for i in $(seq 1 20); do
-    [ -S /var/run/tailscale/tailscaled.sock ] && break
+TAILSCALE_PID=$!
+TAILSCALE_READY=false
+for i in $(seq 1 30); do
+    if [ -S /var/run/tailscale/tailscaled.sock ]; then
+        TAILSCALE_READY=true
+        break
+    fi
     sleep 1
 done
-[ -S /var/run/tailscale/tailscaled.sock ] || { log "FATAL: tailscaled failed"; exit 1; }
 
-TS_HOST="${TS_HOSTNAME:-hermes-$(openssl rand -hex 4)}"
-tailscale up --authkey="$TS_AUTHKEY" --hostname="$TS_HOST" --accept-routes 2>&1 | tail -3
-sleep 3
-tailscale set --ssh 2>&1 | tail -3
-sleep 2
-TS_IP=$(tailscale ip -4 2>/dev/null || echo "pending")
-log "Tailscale: $TS_IP"
+if $TAILSCALE_READY; then
+    TS_HOST="${TS_HOSTNAME:-hermes-$(openssl rand -hex 4)}"
+    if tailscale up --authkey="$TS_AUTHKEY" --hostname="$TS_HOST" --accept-routes 2>&1 | tail -3; then
+        sleep 3
+        tailscale set --ssh 2>&1 | tail -3 || true
+        sleep 2
+        TS_IP=$(tailscale ip -4 2>/dev/null || echo "pending")
+        log "Tailscale: $TS_IP"
 
-# ── 5. SSHD ─────────────────────────────────────────────────
-mkdir -p /root/.ssh && chmod 700 /root/.ssh
-[ -n "${SSH_PUBLIC_KEY:-}" ] && echo "$SSH_PUBLIC_KEY" > /root/.ssh/authorized_keys && chmod 600 /root/.ssh/authorized_keys
-/usr/sbin/sshd -D &
+        # SSHD
+        mkdir -p /root/.ssh && chmod 700 /root/.ssh
+        [ -n "${SSH_PUBLIC_KEY:-}" ] && echo "$SSH_PUBLIC_KEY" > /root/.ssh/authorized_keys && chmod 600 /root/.ssh/authorized_keys
+        /usr/sbin/sshd -D &
+        log "SSHD started"
+    else
+        log "Tailscale up failed — continuing"
+    fi
+else
+    log "Tailscale not ready in 30s — continuing without it"
+fi
 
-# ── 6. Hermes Gateway ──────────────────────────────────────
+# ── 6. Hermes Gateway (best-effort) ──────────────────────────
 log "Starting Hermes Gateway..."
-export PATH="/hermes-venv/bin:$PATH"
 hermes gateway run > "$LOG/gateway.log" 2>&1 &
 GW_PID=$!
+# Wait up to 2min for gateway (soft timeout)
 for i in $(seq 1 60); do
     sleep 2
-    kill -0 $GW_PID 2>/dev/null || { log "Gateway died early"; cat "$LOG/gateway.log"; exit 1; }
+    if ! kill -0 $GW_PID 2>/dev/null; then
+        log "Gateway died early"
+        cat "$LOG/gateway.log" || true
+        GW_PID=""
+        break
+    fi
 done
-log "Gateway: running"
+if [ -n "$GW_PID" ]; then
+    log "Gateway: running (or still starting)"
+fi
 
-# ── 7. Dashboard + Health ───────────────────────────────────
+# ── 7. Dashboard (best-effort) ──────────────────────────────
 hermes-web-ui start --port 8648 > "$LOG/dashboard.log" 2>&1 &
-sleep 3
-python3 /app/health.py > "$LOG/health.log" 2>&1 &
 
-log "LIVE — Tailscale: $TS_IP | Dashboard:8648 | API:8642 | Hindsight:8888"
-wait $GW_PID
+log "LIVE — Tailscale: ${TS_IP:-pending} | Dashboard:8648 | API:8642 | Hindsight:8888"
+log "Wiki vault: $WIKI_PATH"
+wait ${GW_PID:-$HEALTH_PID}
