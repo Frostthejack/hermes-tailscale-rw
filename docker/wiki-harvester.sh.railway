@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# wiki-harvester.sh (Linux/Railway) — Fetch new content from configured sources,
+# wiki-harvester.sh (Linux/Railway) - Fetch new content from configured sources,
 # synthesize wiki pages, and reindex.
 #
 # Usage:
@@ -9,18 +9,12 @@
 # With --source, runs only that specific source.
 #
 # Dependencies:
-#   - watch_*.py scripts (watchers skill)
 #   - wiki-search.py (at $WIKI_SEARCH_SCRIPT)
 #   - sources.yaml at $WIKI_SOURCES
-#   - Hermes web_extract tool (called by the agent, not directly)
+#   - PyYAML (pip install pyyaml)
 #
 # This script is the FETCH layer. Page synthesis and reindex are
 # handled by the agent (Hermes) interpreting the output.
-# The agent should:
-#   1. Run this script
-#   2. For each new raw article, synthesize a wiki page
-#   3. Update index.md and log.md
-#   4. Run wiki-search.py ingest
 
 set -euo pipefail
 
@@ -30,7 +24,6 @@ WIKI_PATH="${WIKI_PATH:-/app/wiki/wiki}"
 WIKI_RAW="$WIKI_PATH/raw/articles"
 WIKI_SOURCES="${WIKI_SOURCES:-$WIKI_PATH/sources.yaml}"
 WIKI_SEARCH_SCRIPT="${WIKI_SEARCH_SCRIPT:-$HERMES_HOME/scripts/wiki-search.py}"
-WATCHER_SCRIPTS="${WATCHER_SCRIPTS:-$HERMES_HOME/skills/devops/watchers/scripts}"
 STATE_DIR="/hermes-data/wiki-state"
 DRY_RUN=false
 SOURCE_FILTER=""
@@ -63,5 +56,99 @@ if [ ! -f "$WIKI_SOURCES" ]; then
   echo "Only raw article fetch will work."
 fi
 
-# ... rest of harvester logic is OS-agnostic ...
-echo "Harvester fetch complete."
+# --- Run RSS watchers ---
+run_rss_watcher() {
+  local name="$1" url="$2"
+  echo "-> $name"
+  if $DRY_RUN; then
+    echo "  [dry-run] Would run: watch_rss.py --name $name --url $url"
+    return
+  fi
+  echo "  (RSS watcher - requires watch_rss.py from watchers skill)"
+  echo "__HARVEST_AGENT__:$name"
+}
+
+# --- Run GitHub watcher ---
+run_github_watcher() {
+  local name="$1" repo="$2"
+  echo "-> GitHub: $name ($repo)"
+  if $DRY_RUN; then
+    echo "  [dry-run] Would run: watch_github.py --name $name --repo $repo"
+    return
+  fi
+  echo "  (GitHub watcher - requires watch_github.py from watchers skill)"
+  echo "__HARVEST_AGENT__:$name"
+}
+
+# --- Parse sources.yaml and run watchers ---
+parse_sources() {
+  python3 -c "
+import yaml, sys
+try:
+    with open('$WIKI_SOURCES') as f:
+        data = yaml.safe_load(f)
+    sources = data.get('sources', [])
+    for s in sources:
+        if s.get('scope') != 'domain':
+            continue
+        if '$SOURCE_FILTER' and s['name'] != '$SOURCE_FILTER':
+            continue
+        print(f\"{s['name']}|{s['type']}|{s.get('url', '')}|{s.get('repo', '')}|{s.get('query', '')}\")
+except Exception as e:
+    print(f'Error parsing sources.yaml: {e}', file=sys.stderr)
+" 2>/dev/null || echo ""
+}
+
+echo "--- Running domain watchers ---"
+NEW_SOURCES=""
+
+if python3 -c "import yaml" 2>/dev/null; then
+  while IFS='|' read -r name type url repo query; do
+    [[ -z "$name" ]] && continue
+    case "$type" in
+      rss)
+        result=$(run_rss_watcher "$name" "$url" 2>&1)
+        echo "$result"
+        if echo "$result" | grep -q "__HARVEST_NEW__\|__HARVEST_AGENT__"; then
+          NEW_SOURCES="$NEW_SOURCES $name"
+        fi
+        ;;
+      github)
+        result=$(run_github_watcher "$name" "$repo" 2>&1)
+        echo "$result"
+        if echo "$result" | grep -q "__HARVEST_NEW__\|__HARVEST_AGENT__"; then
+          NEW_SOURCES="$NEW_SOURCES $name"
+        fi
+        ;;
+      arxiv|http_json)
+        echo "-> $name ($type) - requires agent-side processing (web_search + web_extract)"
+        echo "__HARVEST_AGENT__:$name"
+        NEW_SOURCES="$NEW_SOURCES $name"
+        ;;
+    esac
+  done < <(parse_sources)
+else
+  echo "PyYAML not installed. Install with: pip install pyyaml"
+  echo "Manual sources:"
+  run_github_watcher "hermes-agent-releases" "NousResearch/hermes-agent"
+  run_github_watcher "hindsight-releases" "NousResearch/hindsight"
+fi
+
+echo ""
+echo "--- Reindex ---"
+if $DRY_RUN; then
+  echo "[dry-run] Would run: python3 $WIKI_SEARCH_SCRIPT ingest"
+else
+  python3 "$WIKI_SEARCH_SCRIPT" ingest 2>&1 | tail -5
+fi
+
+echo ""
+echo "=== Done ==="
+echo "New sources: ${NEW_SOURCES:-none}"
+
+if [[ -n "$NEW_SOURCES" ]]; then
+  echo ""
+  echo "__HARVEST_COMPLETE__"
+  echo "NEXT: For each new source above, call web_extract on the emitted URLs,"
+  echo "synthesize wiki pages, update index.md + log.md, then reindex."
+fi
