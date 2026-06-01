@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
-"""Minimal HTTP health check server on port 8080."""
+"""Minimal HTTP health check server. Uses $PORT if set, otherwise 8080."""
 import http.server
 import socketserver
+import os
 
 class Handler(http.server.BaseHTTPRequestHandler):
     def do_GET(self):
@@ -12,5 +13,7 @@ class Handler(http.server.BaseHTTPRequestHandler):
     def log_message(self, *args):
         pass
 
-with socketserver.TCPServer(("0.0.0.0", 8080), Handler) as httpd:
+port = int(os.environ.get("PORT", 8080))
+with socketserver.TCPServer(("0.0.0.0", port), Handler) as httpd:
+    print(f"Health check listening on port {port}")
     httpd.serve_forever()
