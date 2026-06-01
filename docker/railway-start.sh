@@ -63,7 +63,7 @@ if [ -z "${GITHUB_TOKEN:-}" ]; then
     log "WARNING: GITHUB_TOKEN not set — skipping wiki vault clone"
 elif [ ! -d "$WIKI_PATH/.git" ]; then
     log "Cloning wiki vault..."
-    WIKI_AUTH_URL="https...echo "$WIKI_VAULT_REPO" | sed 's|https://github.com/||')"
+    WIKI_AUTH_URL="https://x-access-token:${GITHUB_TOKEN}@github.com/$(echo "$WIKI_VAULT_REPO" | sed 's|https://github.com/||')"
     if git clone "$WIKI_AUTH_URL" "$WIKI_PATH" 2>&1 | tail -3; then
         log "Wiki vault: cloned"
     else
@@ -118,75 +118,25 @@ else
         TS_HOST="${TS_HOSTNAME:-hermes-agent}"
         TS_CONNECTED=false
 
-        # 5c. Try to bring up Tailscale with existing state ────────
-        log "Tailscale: attempting 'tailscale up' with existing state (hostname=$TS_HOST)..."
-        if tailscale up --accept-routes --hostname="$TS_HOST" 2>&1 | tail -5; then
-            sleep 2
+        # 5c. Always use auth key — skip state reuse attempt because
+        #     `tailscale up` without --authkey blocks waiting for interactive
+        #     login in a container, preventing the script from continuing.
+        log "Tailscale: using auth key directly (hostname=$TS_HOST)..."
+
+        # Remove any stale state that could conflict with the auth key
+        rm -f /hermes-data/tailscale.state 2>/dev/null || true
+
+        if tailscale up --authkey="$TS_AUTHKEY" --hostname="$TS_HOST" --accept-routes --reset 2>&1 | tail -5; then
+            sleep 3
             TS_IP=$(tailscale ip -4 2>/dev/null || echo "")
             if [ -n "$TS_IP" ]; then
                 TS_CONNECTED=true
-                log "Tailscale: CONNECTED via existing state — ip=$TS_IP"
+                log "Tailscale: CONNECTED via auth key — ip=$TS_IP"
             else
-                log "Tailscale: 'up' succeeded but no IPv4 address yet — will try auth key"
+                log "WARNING: 'tailscale up --authkey' appeared to succeed but no IPv4 address returned"
             fi
         else
-            log "Tailscale: 'tailscale up' with existing state failed — will try auth key"
-        fi
-
-        # 5d. Fallback: reset and use auth key ─────────────────────
-        if ! $TS_CONNECTED; then
-            log "Tailscale: dropping existing state, killing old daemon, using auth key..."
-
-            # Kill the first tailscaled cleanly
-            tailscale down 2>/dev/null || true
-            kill "$TAILSCALE_PID" 2>/dev/null || true
-            wait "$TAILSCALE_PID" 2>/dev/null || true
-            sleep 1
-
-            # Remove stale socket file to prevent "address already in use"
-            rm -f /var/run/tailscale/tailscaled.sock 2>/dev/null || true
-            rm -f /hermes-data/tailscale.state 2>/dev/null || true
-
-            log "Tailscale: starting fresh tailscaled with auth key..."
-            tailscaled --tun=userspace-networking --state=/hermes-data/tailscale.state &
-            TAILSCALE_PID=$!
-
-            # Wait for the new daemon to be ready
-            TAILSCALE_FRESH_READY=false
-            for i in $(seq 1 30); do
-                if [ -S /var/run/tailscale/tailscaled.sock ]; then
-                    TAILSCALE_FRESH_READY=true
-                    log "Tailscale: fresh tailscaled is ready (pid=$TAILSCALE_PID) after ${i}s"
-                    break
-                fi
-                sleep 1
-            done
-
-            if ! $TAILSCALE_FRESH_READY; then
-                log "ERROR: fresh tailscaled did not become ready within 30s — continuing without Tailscale"
-            else
-                log "Tailscale: running 'tailscale up --authkey=***' (hostname=$TS_HOST)..."
-                if tailscale up --authkey="$TS_AUTHKEY" --hostname="$TS_HOST" --accept-routes 2>&1 | tail -3; then
-                    sleep 3
-
-                    # Verify connection
-                    TS_IP=$(tailscale ip -4 2>/dev/null || echo "")
-                    if [ -n "$TS_IP" ]; then
-                        TS_CONNECTED=true
-                        log "Tailscale: CONNECTED via auth key — ip=$TS_IP"
-                    else
-                        log "WARNING: 'tailscale up --authkey' appeared to succeed but no IPv4 address returned"
-                        # Double-check with tailscale status
-                        if tailscale status 2>&1 | head -5; then
-                            log "Tailscale: status check passed but no ip yet — may need more time"
-                        else
-                            log "ERROR: tailscale status check failed after auth key login"
-                        fi
-                    fi
-                else
-                    log "ERROR: 'tailscale up --authkey' failed — continuing without Tailscale"
-                fi
-            fi
+            log "ERROR: 'tailscale up --authkey' failed — continuing without Tailscale"
         fi
 
         # 5e. Post-connection: enable SSH and verify ───────────────
