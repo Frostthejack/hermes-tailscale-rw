@@ -28,6 +28,7 @@ import json
 import hashlib
 import time
 import argparse
+import requests
 from pathlib import Path
 
 # Configuration
@@ -215,7 +216,7 @@ def search(query: str, limit: int = 5):
         text = r.get("text", "").strip()
         if len(text) > 300:
             text = text[:297] + "..."
-        meta = r.get("metadata", {})
+        meta = r.get("metadata") or {}
         path = meta.get("path", "")
         source = f" <- {path}" if path else ""
         print(f"\n{i}. {text}{source}")

@@ -87,6 +87,7 @@ python3 /app/generate_config.py
 
 # ── 5. Tailscale (userspace networking, best-effort) ───────
 log "Starting Tailscale..."
+rm -f /hermes-data/tailscale.state
 tailscaled --tun=userspace-networking --state=/hermes-data/tailscale.state &
 TAILSCALE_PID=$!
 TAILSCALE_READY=false
