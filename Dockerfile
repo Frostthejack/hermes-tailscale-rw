@@ -26,14 +26,18 @@ RUN git clone --depth 1 https://github.com/NousResearch/hermes-agent.git /hermes
     && /hermes-venv/bin/pip install --no-cache-dir hindsight-client>=0.4.22
 ENV PATH="/hermes-venv/bin:${PATH}"
 
-# ── Trading System ───────────────────────────────────────────
-RUN git clone --depth 1 https://github.com/Frostthejack/Hermes-Trading.git /app/Hermes-Trading \
-    && /hermes-venv/bin/pip install --no-cache-dir -r /app/Hermes-Trading/requirements.txt
+# ── Trading System (optional) ────────────────────────────────
+# Repo doesn't exist yet — create directory for future use.
+# After creating Frostthejack/Hermes-Trading on GitHub, update
+# this section to clone + install requirements.
+RUN mkdir -p /app/Hermes-Trading
+# When repo is ready, uncomment below and rebuild:
+# RUN git clone --depth 1 https://github.com/Frostthejack/Hermes-Trading.git /app/Hermes-Trading \
+#     && /hermes-venv/bin/pip install --no-cache-dir -r /app/Hermes-Trading/requirements.txt
 ENV TRADING_DB_PATH="/hermes-data/trading.db"
 ENV TRADING_KILL_SWITCH="/hermes-data/KILL_SWITCH"
 
-# ── Wiki Vault ───────────────────────────────────────────────
-# Vault is cloned at boot if not on volume (first run)
+# ── Wiki Vault (cloned at boot, not build) ───────────────────
 ENV WIKI_PATH="/app/wiki"
 ENV WIKI_VAULT_REPO="https://github.com/Frostthejack/Encephalon-Mageia"
 
@@ -42,10 +46,10 @@ RUN mkdir -p /run/sshd \
     && sed -i 's/#PermitRootLogin .*/PermitRootLogin prohibit-password/' /etc/ssh/sshd_config \
     && sed -i 's/#PasswordAuthentication .*/PasswordAuthentication no/' /etc/ssh/sshd_config
 
-# ── Volume directories ───────────────────────────────────────
+# ── Volume directories (must match Railway volume mount) ─────
 RUN mkdir -p /hermes-data/{logs,kanban,watcher-state,tailscale,profiles,wiki-state}
 
-# ── Custom assets (skills, profiles, hooks) ──────────────────
+# ── Custom assets (skills, profiles, hooks, boot files) ──────
 COPY skills/ /root/.hermes/skills/
 COPY profiles/ /root/.hermes/profiles/
 COPY hooks/ /root/.hermes/hooks/
