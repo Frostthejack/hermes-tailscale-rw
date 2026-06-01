@@ -85,9 +85,8 @@ log "Health check started"
 # ── 4. Config generation (Python — safe secret handling) ────
 python3 /app/generate_config.py
 
-# ── 5. Tailscale (userspace networking, best-effort) ───────
-log "Starting Tailscale..."
-rm -f /hermes-data/tailscale.state
+# ── 5. Tailscale (userspace networking, smart state) ──────
+log "Starting Tailscaled..."
 tailscaled --tun=userspace-networking --state=/hermes-data/tailscale.state &
 TAILSCALE_PID=$!
 TAILSCALE_READY=false
@@ -100,22 +99,47 @@ for i in $(seq 1 30); do
 done
 
 if $TAILSCALE_READY; then
-    TS_HOST="${TS_HOSTNAME:-hermes-$(openssl rand -hex 4)}"
-    if tailscale up --authkey="$TS_AUTHKEY" --hostname="$TS_HOST" --accept-routes 2>&1 | tail -3; then
-        sleep 3
-        tailscale set --ssh 2>&1 | tail -3 || true
-        sleep 2
-        TS_IP=$(tailscale ip -4 2>/dev/null || echo "pending")
-        log "Tailscale: $TS_IP"
+    TS_HOST="${TS_HOSTNAME:-hermes-agent}"
+    TS_CONNECTED=false
 
-        # SSHD
-        mkdir -p /root/.ssh && chmod 700 /root/.ssh
-        [ -n "${SSH_PUBLIC_KEY:-}" ] && echo "$SSH_PUBLIC_KEY" > /root/.ssh/authorized_keys && chmod 600 /root/.ssh/authorized_keys
-        /usr/sbin/sshd -D &
-        log "SSHD started"
-    else
-        log "Tailscale up failed — continuing"
+    # Try to bring up Tailscale with existing state
+    if tailscale up --accept-routes --hostname="$TS_HOST" 2>&1 | tail -5; then
+        sleep 2
+        TS_IP=$(tailscale ip -4 2>/dev/null || echo "")
+        if [ -n "$TS_IP" ]; then
+            TS_CONNECTED=true
+            log "Tailscale: $TS_IP (existing state)"
+        fi
     fi
+
+    # If existing state didn't work, reset and use auth key
+    if ! $TS_CONNECTED; then
+        log "Tailscale: existing state failed, resetting with auth key..."
+        tailscale down 2>/dev/null || true
+        sleep 1
+        rm -f /hermes-data/tailscale.state
+        tailscaled --tun=userspace-networking --state=/hermes-data/tailscale.state &
+        for i in $(seq 1 30); do
+            [ -S /var/run/tailscale/tailscaled.sock ] && break
+            sleep 1
+        done
+        if tailscale up --authkey="$TS_AUTHKEY" --hostname="$TS_HOST" --accept-routes 2>&1 | tail -3; then
+            sleep 3
+            TS_IP=$(tailscale ip -4 2>/dev/null || echo "pending")
+            log "Tailscale: $TS_IP (new auth)"
+        else
+            log "Tailscale up failed — continuing"
+        fi
+    fi
+
+    # Enable SSH on Tailscale
+    tailscale set --ssh 2>&1 | tail -3 || true
+
+    # SSHD
+    mkdir -p /root/.ssh && chmod 700 /root/.ssh
+    [ -n "${SSH_PUBLIC_KEY:-}" ] && echo "$SSH_PUBLIC_KEY" > /root/.ssh/authorized_keys && chmod 600 /root/.ssh/authorized_keys
+    /usr/sbin/sshd -D &
+    log "SSHD started"
 else
     log "Tailscale not ready in 30s — continuing without it"
 fi
