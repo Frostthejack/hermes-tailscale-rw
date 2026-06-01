@@ -59,10 +59,16 @@ ln -sf /hermes-data/wiki-state /root/.hermes/wiki-state 2>/dev/null || true
 ln -sf /hermes-data/logs /root/.hermes/logs 2>/dev/null || true
 
 # ── 2. Clone/pull wiki vault ────────────────────────────────
-if [ ! -d "$WIKI_PATH/.git" ]; then
+if [ -z "${GITHUB_TOKEN:-}" ]; then
+    log "WARNING: GITHUB_TOKEN not set — skipping wiki vault clone"
+elif [ ! -d "$WIKI_PATH/.git" ]; then
     log "Cloning wiki vault..."
-    git clone "$WIKI_VAULT_REPO" "$WIKI_PATH" 2>&1 | tail -3
-    log "Wiki vault: cloned"
+    WIKI_AUTH_URL="https://x-access-token:${GITHUB_TOKEN}@github.com/$(echo "$WIKI_VAULT_REPO" | sed 's|https://github.com/||')"
+    if git clone "$WIKI_AUTH_URL" "$WIKI_PATH" 2>&1 | tail -3; then
+        log "Wiki vault: cloned"
+    else
+        log "WARNING: wiki vault clone failed — continuing without it"
+    fi
 else
     log "Pulling wiki vault updates..."
     git -C "$WIKI_PATH" pull --rebase 2>&1 | tail -3 || true
