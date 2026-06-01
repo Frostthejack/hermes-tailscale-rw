@@ -63,7 +63,7 @@ if [ -z "${GITHUB_TOKEN:-}" ]; then
     log "WARNING: GITHUB_TOKEN not set — skipping wiki vault clone"
 elif [ ! -d "$WIKI_PATH/.git" ]; then
     log "Cloning wiki vault..."
-    WIKI_AUTH_URL="https://x-access-token:${GITHUB_TOKEN}@github.com/$(echo "$WIKI_VAULT_REPO" | sed 's|https://github.com/||')"
+    WIKI_AUTH_URL="https...echo "$WIKI_VAULT_REPO" | sed 's|https://github.com/||')"
     if git clone "$WIKI_AUTH_URL" "$WIKI_PATH" 2>&1 | tail -3; then
         log "Wiki vault: cloned"
     else
@@ -86,62 +86,135 @@ log "Health check started"
 python3 /app/generate_config.py
 
 # ── 5. Tailscale (userspace networking, smart state) ──────
-log "Starting Tailscaled..."
-tailscaled --tun=userspace-networking --state=/hermes-data/tailscale.state &
-TAILSCALE_PID=$!
-TAILSCALE_READY=false
-for i in $(seq 1 30); do
-    if [ -S /var/run/tailscale/tailscaled.sock ]; then
-        TAILSCALE_READY=true
-        break
-    fi
-    sleep 1
-done
-
-if $TAILSCALE_READY; then
-    TS_HOST="${TS_HOSTNAME:-hermes-agent}"
-    TS_CONNECTED=false
-
-    # Try to bring up Tailscale with existing state
-    if tailscale up --accept-routes --hostname="$TS_HOST" 2>&1 | tail -5; then
-        sleep 2
-        TS_IP=$(tailscale ip -4 2>/dev/null || echo "")
-        if [ -n "$TS_IP" ]; then
-            TS_CONNECTED=true
-            log "Tailscale: $TS_IP (existing state)"
-        fi
-    fi
-
-    # If existing state didn't work, reset and use auth key
-    if ! $TS_CONNECTED; then
-        log "Tailscale: existing state failed, resetting with auth key..."
-        tailscale down 2>/dev/null || true
-        sleep 1
-        rm -f /hermes-data/tailscale.state
-        tailscaled --tun=userspace-networking --state=/hermes-data/tailscale.state &
-        for i in $(seq 1 30); do
-            [ -S /var/run/tailscale/tailscaled.sock ] && break
-            sleep 1
-        done
-        if tailscale up --authkey="$TS_AUTHKEY" --hostname="$TS_HOST" --accept-routes 2>&1 | tail -3; then
-            sleep 3
-            TS_IP=$(tailscale ip -4 2>/dev/null || echo "pending")
-            log "Tailscale: $TS_IP (new auth)"
-        else
-            log "Tailscale up failed — continuing"
-        fi
-    fi
-
-    # Enable SSH on Tailscale
-    tailscale set --ssh 2>&1 | tail -3 || true
-
-    # SSHD
-    mkdir -p /root/.ssh && chmod 700 /root/.ssh
-    [ -n "${SSH_PUBLIC_KEY:-}" ] && echo "$SSH_PUBLIC_KEY" > /root/.ssh/authorized_keys && chmod 600 /root/.ssh/authorized_keys
-    /usr/sbin/sshd -D &
-    log "SSHD started"
+# 5a. Validate TS_AUTHKEY before doing anything ──────────────
+log "Tailscale: validating TS_AUTHKEY..."
+if [[ -z "${TS_AUTHKEY:-}" ]]; then
+    log "WARNING: TS_AUTHKEY is empty/not set — skipping Tailscale setup"
+    log "Tailscale: will continue without Tailscale"
+elif [[ "$TS_AUTHKEY" != tskey-* ]] || [[ ${#TS_AUTHKEY} -lt 30 ]]; then
+    log "ERROR: TS_AUTHKEY is malformed (must start with 'tskey-' and be ≥30 chars) — value starts with: '${TS_AUTHKEY:0:10}...'"
+    log "Tailscale: will continue without Tailscale"
 else
-    log "Tailscale not ready in 30s — continuing without it"
+    log "Tailscale: TS_AUTHKEY looks valid (length=${#TS_AUTHKEY}, prefix=tskey-*)"
+
+    # 5b. Start initial tailscaled daemon ─────────────────────────
+    log "Tailscale: starting tailscaled..."
+    tailscaled --tun=userspace-networking --state=/hermes-data/tailscale.state &
+    TAILSCALE_PID=$!
+    TAILSCALE_READY=false
+    for i in $(seq 1 30); do
+        if [ -S /var/run/tailscale/tailscaled.sock ]; then
+            TAILSCALE_READY=true
+            break
+        fi
+        sleep 1
+    done
+
+    if ! $TAILSCALE_READY; then
+        log "ERROR: tailscaled did not become ready within 30s — continuing without Tailscale"
+    else
+        log "Tailscale: tailscaled is ready (pid=$TAILSCALE_PID, socket present)"
+
+        TS_HOST="${TS_HOSTNAME:-hermes-agent}"
+        TS_CONNECTED=false
+
+        # 5c. Try to bring up Tailscale with existing state ────────
+        log "Tailscale: attempting 'tailscale up' with existing state (hostname=$TS_HOST)..."
+        if tailscale up --accept-routes --hostname="$TS_HOST" 2>&1 | tail -5; then
+            sleep 2
+            TS_IP=$(tailscale ip -4 2>/dev/null || echo "")
+            if [ -n "$TS_IP" ]; then
+                TS_CONNECTED=true
+                log "Tailscale: CONNECTED via existing state — ip=$TS_IP"
+            else
+                log "Tailscale: 'up' succeeded but no IPv4 address yet — will try auth key"
+            fi
+        else
+            log "Tailscale: 'tailscale up' with existing state failed — will try auth key"
+        fi
+
+        # 5d. Fallback: reset and use auth key ─────────────────────
+        if ! $TS_CONNECTED; then
+            log "Tailscale: dropping existing state, killing old daemon, using auth key..."
+
+            # Kill the first tailscaled cleanly
+            tailscale down 2>/dev/null || true
+            kill "$TAILSCALE_PID" 2>/dev/null || true
+            wait "$TAILSCALE_PID" 2>/dev/null || true
+            sleep 1
+
+            # Remove stale socket file to prevent "address already in use"
+            rm -f /var/run/tailscale/tailscaled.sock 2>/dev/null || true
+            rm -f /hermes-data/tailscale.state 2>/dev/null || true
+
+            log "Tailscale: starting fresh tailscaled with auth key..."
+            tailscaled --tun=userspace-networking --state=/hermes-data/tailscale.state &
+            TAILSCALE_PID=$!
+
+            # Wait for the new daemon to be ready
+            TAILSCALE_FRESH_READY=false
+            for i in $(seq 1 30); do
+                if [ -S /var/run/tailscale/tailscaled.sock ]; then
+                    TAILSCALE_FRESH_READY=true
+                    log "Tailscale: fresh tailscaled is ready (pid=$TAILSCALE_PID) after ${i}s"
+                    break
+                fi
+                sleep 1
+            done
+
+            if ! $TAILSCALE_FRESH_READY; then
+                log "ERROR: fresh tailscaled did not become ready within 30s — continuing without Tailscale"
+            else
+                log "Tailscale: running 'tailscale up --authkey=***' (hostname=$TS_HOST)..."
+                if tailscale up --authkey="$TS_AUTHKEY" --hostname="$TS_HOST" --accept-routes 2>&1 | tail -3; then
+                    sleep 3
+
+                    # Verify connection
+                    TS_IP=$(tailscale ip -4 2>/dev/null || echo "")
+                    if [ -n "$TS_IP" ]; then
+                        TS_CONNECTED=true
+                        log "Tailscale: CONNECTED via auth key — ip=$TS_IP"
+                    else
+                        log "WARNING: 'tailscale up --authkey' appeared to succeed but no IPv4 address returned"
+                        # Double-check with tailscale status
+                        if tailscale status 2>&1 | head -5; then
+                            log "Tailscale: status check passed but no ip yet — may need more time"
+                        else
+                            log "ERROR: tailscale status check failed after auth key login"
+                        fi
+                    fi
+                else
+                    log "ERROR: 'tailscale up --authkey' failed — continuing without Tailscale"
+                fi
+            fi
+        fi
+
+        # 5e. Post-connection: enable SSH and verify ───────────────
+        if $TS_CONNECTED; then
+            log "Tailscale: enabling SSH via 'tailscale set --ssh'..."
+            tailscale set --ssh 2>&1 | tail -3 || log "WARNING: 'tailscale set --ssh' returned non-zero"
+
+            # Final verification
+            FINAL_IP=$(tailscale ip -4 2>/dev/null || echo "")
+            if [ -n "$FINAL_IP" ]; then
+                log "Tailscale: fully connected — ip=$FINAL_IP"
+                TS_IP="$FINAL_IP"
+            else
+                log "WARNING: Tailscale was connected but ip now empty — clearing TS_CONNECTED"
+                TS_CONNECTED=false
+            fi
+        fi
+
+        # 5f. Start SSHD (only if Tailscale connected) ─────────────
+        if $TS_CONNECTED; then
+            mkdir -p /root/.ssh && chmod 700 /root/.ssh
+            [ -n "${SSH_PUBLIC_KEY:-}" ] && echo "$SSH_PUBLIC_KEY" > /root/.ssh/authorized_keys && chmod 600 /root/.ssh/authorized_keys
+            /usr/sbin/sshd -D &
+            log "SSHD started (Tailscale ip=${TS_IP:-unknown})"
+        else
+            log "Tailscale: not connected — skipping SSHD"
+        fi
+    fi
 fi
 
 # ── 6. Hermes Gateway (best-effort) ──────────────────────────
