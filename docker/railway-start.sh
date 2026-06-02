@@ -1,53 +1,66 @@
 #!/usr/bin/env bash
-# Minimal debug startup — maximum logging, never crash
+# DEBUG startup — maximum logging, never crash
 LOG="/hermes-data/logs"
 mkdir -p "$LOG"
 log() { echo "[$(date -u +%Y-%m-%dT%H:%M:%SZ)] $*" | tee -a "$LOG/startup.log"; }
 
-log "=== STARTUP ==="
-log "PID: $$ HOSTNAME: $(hostname) USER: $(whoami)"
-
+log "=== STARTUP BEGIN ==="
+log "PID: $$ HOSTNAME: $(hostname) USER: $(whoami) PWD: $(pwd)"
 log "PATH: $PATH"
-log "PYTHON: $(python3 --version 2>&1)"
 
-log "Checking hermes..."
-which hermes 2>/dev/null || log "hermes NOT IN PATH"
-/hermes-venv/bin/hermes --version 2>&1 || log "hermes version FAILED"
+log "--- Step 1: Symlinking ---"
+for f in state.db response_store.db; do
+    src="/hermes-data/$f" dst="/root/.hermes/$f"
+    if [ -e "$src" ] && [ ! -L "$dst" ]; then
+        [ -e "$dst" ] && cp -a "$dst" "$src" 2>/dev/null && rm -rf "$dst"
+        ln -sf "$src" "$dst" && log "Symlinked $dst → $src"
+    elif [ ! -e "$dst" ] && [ ! -L "$dst" ]; then
+        ln -sf "$src" "$dst" && log "Symlinked $dst → $src (new)"
+    fi
+done
 
-log "Starting health check..."
+log "--- Step 2: Health check ---"
+export PATH="/hermes-venv/bin:${PATH:-}"
 python3 /app/health.py > "$LOG/health.log" 2>&1 &
 HEALTH_PID=$!
 log "Health PID: $HEALTH_PID"
 sleep 3
-kill -0 $HEALTH_PID 2>/dev/null && log "Health: alive" || log "Health: DEAD"
+kill -0 $HEALTH_PID 2>/dev/null && log "Health: ALIVE" || log "Health: DEAD"
 
-log "Generating config..."
-python3 /app/generate_config.py 2>&1 || log "Config generation FAILED"
+log "--- Step 3: Config generation ---"
+python3 /app/generate_config.py 2>&1 | tee -a "$LOG/startup.log" || log "Config generation FAILED"
 
-log "Starting gateway..."
+log "--- Step 4: Check hermes ---"
+which hermes 2>/dev/null || log "hermes NOT IN PATH"
+ls -la /hermes-venv/bin/hermes 2>/dev/null || log "hermes binary NOT FOUND"
+/hermes-venv/bin/hermes --version 2>&1 | head -3 || log "hermes --version FAILED"
+
+log "--- Step 5: Tailscale SKIPPED ---"
+
+log "--- Step 6: Gateway ---"
 export PATH="/hermes-venv/bin:${PATH:-}"
+log "Launching hermes gateway run..."
 hermes gateway run > "$LOG/gateway.log" 2>&1 &
 GW_PID=$!
 log "Gateway PID: $GW_PID"
-
 for i in $(seq 1 20); do
     sleep 3
     if ! kill -0 $GW_PID 2>/dev/null; then
-        log "Gateway died at check $i"
-        cat "$LOG/gateway.log" 2>/dev/null | while read line; do log "GW: $line"; done
+        log "GATEWAY DIED at check $i"
+        log "--- gateway.log ---"
+        cat "$LOG/gateway.log" 2>/dev/null | while IFS= read -r line; do log "GW: $line"; done
+        log "--- end gateway.log ---"
         GW_PID=""
         break
     fi
     log "Gateway alive at check $i"
 done
+[ -n "$GW_PID" ] && log "Gateway still running after 60s — GOOD"
 
-[ -z "$GW_PID" ] || log "Gateway still running after 60s"
-
-log "Starting dashboard..."
+log "--- Step 7: Dashboard ---"
 hermes-web-ui start --port 8648 > "$LOG/dashboard.log" 2>&1 &
-DASH_PID=$!
-log "Dashboard PID: $DASH_PID"
+log "Dashboard PID: $!"
 
-log "=== LIVE ==="
+log "=== STARTUP COMPLETE ==="
 wait ${GW_PID:-$HEALTH_PID}
-log "=== EXIT ==="
+log "=== EXIT (wait returned) ==="
