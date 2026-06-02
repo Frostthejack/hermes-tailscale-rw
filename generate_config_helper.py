@@ -45,7 +45,12 @@ def write_config(env):
     if db_url:
         env_lines.append(f"DATABASE_URL={db_url}")
     env_lines.append("API_SERVER_ENABLED=true")
-    env_lines.append("API_SERVER_PORT=8642")
+    # Railway injects PORT — use it for the API server so Railway proxy can reach us
+    railway_port = env.get("PORT", "")
+    if railway_port:
+        env_lines.append(f"API_SERVER_PORT={railway_port}")
+    else:
+        env_lines.append("API_SERVER_PORT=8642")
     env_lines.append("GATEWAY_ALLOW_ALL_USERS=false")
     env_lines.append("HINDSIGHT_MODE=local_embedded")
     env_lines.append(f"HINDSIGHT_BANK_ID={hindsight_bank}")

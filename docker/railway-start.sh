@@ -182,7 +182,7 @@ log "Step 5 done"
 # ── Step 6: Hermes Gateway ──────────────────────────────────
 log "--- Step 6: Gateway ---"
 log "Launching hermes gateway run..."
-hermes gateway run > "$LOG/gateway.log" 2>&1 &
+hermes gateway run 2>&1 | tee "$LOG/gateway.log" &
 GW_PID=$!
 log "Gateway PID: $GW_PID"
 for i in $(seq 1 20); do
