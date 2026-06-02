@@ -3,6 +3,7 @@
 Generate Hermes config.yaml and .env from environment variables.
 Reads Railway environment variables and writes proper config files.
 """
+
 import os
 import json
 
@@ -10,6 +11,7 @@ HERMES_HOME = "/root/.hermes"
 CONFIG_PATH = os.path.join(HERMES_HOME, "config.yaml")
 ENV_PATH = os.path.join(HERMES_HOME, ".env")
 HINDSIGHT_CONFIG_PATH = os.path.join(HERMES_HOME, "hindsight", "config.json")
+
 
 def read_pid1_env():
     """Read environment from PID 1 (where Railway injects secrets)."""
@@ -26,6 +28,7 @@ def read_pid1_env():
         env = os.environ
     return env
 
+
 def write_config(env):
     """Write config.yaml from environment variables."""
     openrouter_key = env.get("OPENROUTER_API_KEY", "")
@@ -33,6 +36,7 @@ def write_config(env):
     api_server_key = env.get("API_SERVER_KEY", "")
     hindsight_bank = env.get("HINDSIGHT_BANK_ID", "hermes-railway")
     ssh_pub_key = env.get("SSH_PUBLIC_KEY", "")
+    discord_token = env.get("DISCORD_BOT_TOKEN", "")
 
     # Write .env file
     env_lines = []
@@ -49,6 +53,8 @@ def write_config(env):
         env_lines.append(f"API_SERVER_KEY={api_server_key}")
     if ssh_pub_key:
         env_lines.append(f"SSH_PUBLIC_KEY={ssh_pub_key}")
+    if discord_token:
+        env_lines.append(f"DISCORD_BOT_TOKEN={discord_token}")
 
     with open(ENV_PATH, "w") as f:
         f.write("\n".join(env_lines) + "\n")
@@ -69,6 +75,9 @@ def write_config(env):
         "agent:",
         "  max_turns: 90",
         "  tool_use_enforcement: suggest",
+        "",
+        "gateway:",
+        "  platform: discord",
         "",
         "terminal:",
         "  backend: local",
@@ -137,6 +146,7 @@ def write_config(env):
     with open(HINDSIGHT_CONFIG_PATH, "w") as f:
         json.dump(hindsight_config, f, indent=2)
     print(f"Wrote {HINDSIGHT_CONFIG_PATH}")
+
 
 if __name__ == "__main__":
     os.makedirs(HERMES_HOME, exist_ok=True)
