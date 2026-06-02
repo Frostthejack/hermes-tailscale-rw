@@ -1,6 +1,5 @@
 #!/usr/bin/env bash
 # railway-start.sh — Full startup: volume symlinks, health, config, Tailscale, Hindsight init, gateway, dashboard.
-set -uo pipefail
 
 LOG="/hermes-data/logs"
 mkdir -p "$LOG"
@@ -85,14 +84,13 @@ if [ -n "${DATABASE_URL:-}" ]; then
 
     # Check if hindsight-client is installed
     if /hermes-venv/bin/pip show hindsight-client &>/dev/null; then
-        log "hindsight-client installed"
-
-        # Initialize the Hindsight bank
+        log "hindsight-client: installed ($(/hermes-venv/bin/pip show hindsight-client 2>/dev/null | grep Version))"
+        # The Hindsight bank is auto-initialized when the gateway starts with the
+        # hindsight plugin enabled. No CLI init needed — just verify the config.
         if [ -f /root/.hermes/hindsight/config.json ]; then
-            log "Hindsight config exists — attempting bank init..."
-            /hermes-venv/bin/hindsight init 2>&1 | tail -5 && log "Hindsight init: OK" || log "Hindsight init returned non-zero (bank may already exist)"
+            log "Hindsight config.json present — bank will init on first gateway use"
         else
-            log "No hindsight config.json — skipping init"
+            log "WARNING: No hindsight config.json found"
         fi
     else
         log "hindsight-client NOT installed — installing..."
@@ -110,8 +108,8 @@ ls -la /hermes-venv/bin/hermes 2>/dev/null && log "hermes binary found" || log "
 hermes --version 2>&1 | head -3 && log "hermes version OK" || log "hermes --version FAILED"
 log "Step 4 done"
 
-# ── Step 5: Tailscale Phase 2 (authkey + --reset) ───────────
-log "--- Step 5: Tailscale Phase 2 ---"
+# ── Step 5: Tailscale (preserve state, fallback to --reset) ───
+log "--- Step 5: Tailscale ---"
 if [ -z "${TS_AUTHKEY:-}" ]; then
     log "TS_AUTHKEY not set — skipping Tailscale"
 elif ! command -v tailscaled &>/dev/null; then
@@ -119,11 +117,10 @@ elif ! command -v tailscaled &>/dev/null; then
 else
     TS_HOST="${TS_HOSTNAME:-hermes-agent}"
 
-    # Kill any stale tailscaled process and clean up socket
+    # Kill any stale tailscaled process and clean up socket (but NOT state file)
     pkill -f tailscaled 2>/dev/null || true
     sleep 1
     rm -f /var/run/tailscale/tailscaled.sock 2>/dev/null || true
-    rm -f /hermes-data/tailscale.state 2>/dev/null || true
 
     log "Starting tailscaled (userspace-networking)..."
     tailscaled --tun=userspace-networking --state=/hermes-data/tailscale.state &
@@ -140,14 +137,33 @@ else
     done
 
     if $TAILSCALE_READY; then
-        log "Bringing up Tailscale with auth key + --reset..."
-        if tailscale up --authkey="$TS_AUTHKEY" --hostname="$TS_HOST" --accept-routes --reset 2>&1 | tee -a "$LOG/startup.log"; then
+        # Phase 1: Try to bring up with existing state (preserves node identity)
+        TS_IP=""
+        log "Phase 1: Trying tailscale up with existing state..."
+        if tailscale up --authkey="$TS_AUTHKEY" --hostname="$TS_HOST" --accept-routes 2>&1 | tee -a "$LOG/startup.log"; then
             sleep 3
-            TS_IP=$(tailscale ip -4 2>/dev/null || echo "pending")
-            log "Tailscale UP: $TS_IP"
-        else
-            log "Tailscale up FAILED"
+            TS_IP=$(tailscale ip -4 2>/dev/null || echo "")
         fi
+
+        # Phase 2: If Phase 1 failed, clean state and retry with --reset
+        if [ -z "$TS_IP" ]; then
+            log "Phase 1 failed — Phase 2: removing stale state and retrying with --reset..."
+            tailscale down 2>/dev/null || true
+            # Stop tailscaled, remove state, restart
+            pkill -f tailscaled 2>/dev/null || true
+            sleep 2
+            rm -f /hermes-data/tailscale.state /var/run/tailscale/tailscaled.sock 2>/dev/null || true
+            tailscaled --tun=userspace-networking --state=/hermes-data/tailscale.state &
+            sleep 3
+            if tailscale up --authkey="$TS_AUTHKEY" --hostname="$TS_HOST" --accept-routes --reset 2>&1 | tee -a "$LOG/startup.log"; then
+                sleep 5
+                TS_IP=$(tailscale ip -4 2>/dev/null || echo "pending")
+            else
+                TS_IP="FAILED"
+            fi
+        fi
+
+        log "Tailscale IP: $TS_IP"
 
         # Enable Tailscale SSH (allows `ssh root@hermes-agent` from tailnet)
         tailscale set --ssh 2>&1 | tail -1 || true
@@ -195,7 +211,7 @@ log "Step 7 done"
 log "=== STARTUP COMPLETE ==="
 log "Tailscale IP: $(tailscale ip -4 2>/dev/null || echo N/A)"
 log "hermes CLI: $(which hermes 2>/dev/null || echo 'not found')"
-log "Hindsight: $(/hermes-venv/bin/hindsight --version 2>/dev/null || echo 'not available')"
+log "Hindsight: config at /root/.hermes/hindsight/config.json $([ -f /root/.hermes/hindsight/config.json ] && echo '(present)' || echo '(missing)')"
 
 wait ${GW_PID:-$HEALTH_PID}
 log "=== EXIT (wait returned) ==="
