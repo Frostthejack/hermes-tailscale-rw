@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
-# railway-start.sh — Full startup: volume symlinks, health, config, Tailscale Phase 2, gateway, dashboard.
+# railway-start.sh — Full startup: volume symlinks, health, config, Tailscale, Hindsight init, gateway, dashboard.
+set -uo pipefail
+
 LOG="/hermes-data/logs"
 mkdir -p "$LOG"
 log() { echo "[$(date -u +%Y-%m-%dT%H:%M:%SZ)] $*" | tee -a "$LOG/startup.log"; }
@@ -7,19 +9,6 @@ log() { echo "[$(date -u +%Y-%m-%dT%H:%M:%SZ)] $*" | tee -a "$LOG/startup.log"; 
 log "=== STARTUP BEGIN ==="
 log "PID: $$ HOSTNAME: $(hostname) USER: $(whoami) PWD: $(pwd)"
 log "PATH: $PATH"
-
-# ── Step 0: Ensure hermes commands are accessible from any shell ──
-log "--- Step 0: PATH setup ---"
-# Add to shell RC files so SSH/Tailscale SSH sessions have PATH
-grep -q '/hermes-venv/bin' /root/.bashrc 2>/dev/null || echo 'export PATH="/hermes-venv/bin:$PATH"' >> /root/.bashrc
-grep -q '/hermes-venv/bin' /root/.profile 2>/dev/null || echo 'export PATH="/hermes-venv/bin:$PATH"' >> /root/.profile
-# Symlink hermes binary to system PATH
-ln -sf /hermes-venv/bin/hermes /usr/local/bin/hermes 2>/dev/null || true
-# Also symlink hindsight if available
-ln -sf /hermes-venv/bin/hindsight /usr/local/bin/hindsight 2>/dev/null || true
-export PATH="/hermes-venv/bin:${PATH:-}"
-log "PATH now includes /hermes-venv/bin"
-log "Step 0 done"
 
 # ── Step 1: Symlink persistent data ──────────────────────────
 log "--- Step 1: Symlinking ---"
@@ -35,28 +24,38 @@ for f in state.db response_store.db; do
     fi
 done
 
-# Persist memory files on volume
+# Persist memory/personality files on volume so they survive redeployments
 for f in MEMORY.md USER.md HERMES.md AGENTS.md; do
     src="/hermes-data/$f" dst="/root/.hermes/$f"
     if [ -e "$src" ] && [ ! -L "$dst" ]; then
+        # Volume has the file, local doesn't — symlink it
         [ -e "$dst" ] && cp "$dst" "$src" 2>/dev/null
         rm -f "$dst" 2>/dev/null
-        ln -sf "$src" "$dst"
-        log "Memory symlinked $dst -> $src (volume had file)"
+        ln -sf "$src" "$dst" && log "Symlinked $dst -> $src (persisted)"
     elif [ ! -e "$dst" ] && [ ! -e "$src" ]; then
+        # Neither exists — create empty on volume and symlink
         touch "$src"
-        ln -sf "$src" "$dst"
-        log "Memory created $src and symlinked $dst"
+        ln -sf "$src" "$dst" && log "Symlinked $dst -> $src (new)"
     elif [ -e "$dst" ] && [ ! -L "$dst" ] && [ ! -e "$src" ]; then
+        # Local exists but not on volume — copy to volume, then symlink
         cp "$dst" "$src"
         rm -f "$dst"
-        ln -sf "$src" "$dst"
-        log "Memory copied $dst to volume and symlinked"
-    else
-        log "Memory $f: already OK (symlink exists)"
+        ln -sf "$src" "$dst" && log "Symlinked $dst -> $src (migrated)"
     fi
 done
+
 log "Step 1 done"
+
+# ── Step 1b: Ensure hermes is in PATH for all shells ─────────
+log "--- Step 1b: PATH setup ---"
+# Add to system PATH
+ln -sf /hermes-venv/bin/hermes /usr/local/bin/hermes 2>/dev/null || true
+# Ensure login shells also get the venv
+grep -q '/hermes-venv/bin' /root/.bashrc 2>/dev/null || echo 'export PATH="/hermes-venv/bin:$PATH"' >> /root/.bashrc
+grep -q '/hermes-venv/bin' /root/.profile 2>/dev/null || echo 'export PATH="/hermes-venv/bin:$PATH"' >> /root/.profile
+# Source it for this script too
+export PATH="/hermes-venv/bin:${PATH:-}"
+log "PATH setup done (hermes -> /usr/local/bin/hermes)"
 
 # ── Step 2: Health check (must pass for Railway) ────────────
 log "--- Step 2: Health check ---"
@@ -76,21 +75,31 @@ else
 fi
 log "Step 3 done"
 
-# ── Step 3b: Initialize Hindsight with PostgreSQL ────────────
+# ── Step 3b: Hindsight initialization ───────────────────────
 log "--- Step 3b: Hindsight init ---"
-if [ -n "$DATABASE_URL" ]; then
-    log "Initializing Hindsight database..."
-    # Create pgvector extension if not exists
-    psql "$DATABASE_URL" -c "CREATE EXTENSION IF NOT EXISTS vector;" 2>&1 | tail -2
-    log "pgvector extension: done"
-    # Initialize the Hindsight bank
-    if /hermes-venv/bin/hindsight init --bank hermes-railway 2>&1 | tail -3; then
-        log "Hindsight: initialized"
+if [ -n "${DATABASE_URL:-}" ]; then
+    log "DATABASE_URL found — initializing Hindsight with PostgreSQL"
+
+    # Ensure pgvector extension exists
+    psql "$DATABASE_URL" -c "CREATE EXTENSION IF NOT EXISTS vector;" 2>&1 | tail -3 && log "pgvector extension: OK" || log "pgvector CREATE failed (may already exist or not supported)"
+
+    # Check if hindsight-client is installed
+    if /hermes-venv/bin/pip show hindsight-client &>/dev/null; then
+        log "hindsight-client installed"
+
+        # Initialize the Hindsight bank
+        if [ -f /root/.hermes/hindsight/config.json ]; then
+            log "Hindsight config exists — attempting bank init..."
+            /hermes-venv/bin/hindsight init 2>&1 | tail -5 && log "Hindsight init: OK" || log "Hindsight init returned non-zero (bank may already exist)"
+        else
+            log "No hindsight config.json — skipping init"
+        fi
     else
-        log "Hindsight init failed (may already exist)"
+        log "hindsight-client NOT installed — installing..."
+        /hermes-venv/bin/pip install --no-cache-dir "hindsight-client>=0.4.22" 2>&1 | tail -5 && log "hindsight-client installed" || log "hindsight-client install FAILED"
     fi
 else
-    log "No DATABASE_URL — Hindsight using SQLite fallback"
+    log "No DATABASE_URL — Hindsight will use SQLite fallback"
 fi
 log "Step 3b done"
 
@@ -98,10 +107,7 @@ log "Step 3b done"
 log "--- Step 4: Check hermes ---"
 which hermes 2>/dev/null && log "hermes in PATH" || log "hermes NOT IN PATH"
 ls -la /hermes-venv/bin/hermes 2>/dev/null && log "hermes binary found" || log "hermes binary NOT FOUND"
-/hermes-venv/bin/hermes --version 2>&1 | head -3 && log "hermes version OK" || log "hermes --version FAILED"
-# Check hindsight
-which hindsight 2>/dev/null && log "hindsight in PATH" || log "hindsight NOT IN PATH"
-ls -la /hermes-venv/bin/hindsight 2>/dev/null && log "hindsight binary found" || log "hindsight binary NOT FOUND"
+hermes --version 2>&1 | head -3 && log "hermes version OK" || log "hermes --version FAILED"
 log "Step 4 done"
 
 # ── Step 5: Tailscale Phase 2 (authkey + --reset) ───────────
@@ -121,7 +127,6 @@ else
 
     log "Starting tailscaled (userspace-networking)..."
     tailscaled --tun=userspace-networking --state=/hermes-data/tailscale.state &
-    TAILSCALE_PID=$!
 
     # Wait for tailscaled socket
     TAILSCALE_READY=false
@@ -144,13 +149,13 @@ else
             log "Tailscale up FAILED"
         fi
 
-        # Enable SSH over Tailscale
+        # Enable Tailscale SSH (allows `ssh root@hermes-agent` from tailnet)
         tailscale set --ssh 2>&1 | tail -1 || true
 
-        # Start SSHD on port 2222 (Railway may block port 22; Tailscale SSH on 22 still works via tailscaled)
+        # Also start SSHD on port 2222 for direct SSH
         mkdir -p /root/.ssh && chmod 700 /root/.ssh
         [ -n "${SSH_PUBLIC_KEY:-}" ] && echo "$SSH_PUBLIC_KEY" > /root/.ssh/authorized_keys && chmod 600 /root/.ssh/authorized_keys
-        /usr/sbin/sshd -p 2222 &
+        /usr/sbin/sshd -D -p 2222 &
         log "SSHD started on port 2222 (PID: $!)"
     else
         log "tailscaled not ready in 30s — skipping Tailscale"
@@ -188,5 +193,9 @@ log "Dashboard PID: $!"
 log "Step 7 done"
 
 log "=== STARTUP COMPLETE ==="
+log "Tailscale IP: $(tailscale ip -4 2>/dev/null || echo N/A)"
+log "hermes CLI: $(which hermes 2>/dev/null || echo 'not found')"
+log "Hindsight: $(/hermes-venv/bin/hindsight --version 2>/dev/null || echo 'not available')"
+
 wait ${GW_PID:-$HEALTH_PID}
 log "=== EXIT (wait returned) ==="
